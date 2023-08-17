@@ -1,0 +1,32 @@
+import { Controller, Get } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import {
+  HealthCheck,
+  HealthCheckService,
+  HttpHealthIndicator,
+  MemoryHealthIndicator,
+  PrismaHealthIndicator,
+} from '@nestjs/terminus';
+import { PrismaService } from '@shared/prisma.service';
+
+@Controller('health')
+export class HealthController {
+  constructor(
+    private health: HealthCheckService,
+    private config: ConfigService,
+    private prisma: PrismaService,
+    private http: HttpHealthIndicator,
+    private prismaHealth: PrismaHealthIndicator,
+    private memory: MemoryHealthIndicator,
+  ) {}
+
+  @Get('json')
+  @HealthCheck()
+  check() {
+    return this.health.check([
+      () => this.http.pingCheck('home-page', this.config.get('APP_URL')),
+      () => this.prismaHealth.pingCheck('database', this.prisma),
+      () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024),
+    ]);
+  }
+}

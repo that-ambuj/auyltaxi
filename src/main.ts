@@ -15,6 +15,8 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
 
+  app.enableCors();
+
   const configService = app.get(ConfigService);
   const env = configService.get<Environment>('NODE_ENV');
 

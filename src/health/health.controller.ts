@@ -24,9 +24,10 @@ export class HealthController {
   @HealthCheck()
   check() {
     return this.health.check([
-      () => this.http.pingCheck('home-page', this.config.get('APP_URL')),
+      () =>
+        this.http.pingCheck('home-page', this.config.get('APP_URL') + '/hello'),
       () => this.prismaHealth.pingCheck('database', this.prisma),
-      () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024),
+      () => this.memory.checkHeap('heap-memory', 150 * 1024 * 1024),
     ]);
   }
 }

@@ -13,9 +13,9 @@ datasource db {
 }
 
 model Customer {
-  id       String @id @default(uuid())
-  email_id String @unique
-  name     String
+  id           String  @id @default(uuid())
+  phone_number String  @unique
+  name         String?
 
   rides Ride[]
 
@@ -23,68 +23,67 @@ model Customer {
 }
 
 model Driver {
-  id       String  @id @default(uuid())
-  email_id String  @unique
-  name     String
-  balance  Decimal @default(0) @db.Decimal(12, 2)
+  id           String  @id @default(uuid())
+  name         String?
+  phone_number String  @unique
+  balance      Decimal @default(0) @db.Decimal(12, 2)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  cars Car[]
+  car       Car         @relation(fields: [car_id], references: [id])
+  car_id    String      @unique
+  Ride      Ride[]
+  RideOffer RideOffer[]
 }
 
 model Car {
-  id             String @id @default(uuid())
-  license_number String @unique
+  id             String  @id @default(uuid())
+  license_number String  @unique
+  model          String?
+  brand          String?
 
-  driver    Driver @relation(fields: [driver_id], references: [id])
-  driver_id String
-  rides     Ride[]
-
-  @@index([driver_id])
+  Driver Driver?
 }
 
 model Ride {
-  id        String  @id @default(uuid())
-  orig_long Decimal @db.Decimal(30, 15)
-  orig_lat  Decimal @db.Decimal(30, 15)
-  dest_long Decimal @db.Decimal(30, 15)
-  dest_lat  Decimal @db.Decimal(30, 15)
+  id String @id @default(uuid())
+
+  orig_long Decimal @db.Decimal(20, 15)
+  orig_lat  Decimal @db.Decimal(20, 15)
+  dest_long Decimal @db.Decimal(20, 15)
+  dest_lat  Decimal @db.Decimal(20, 15)
 
   fare_kop Decimal    @db.Decimal(12, 2)
-  status   RideStatus @default(BOOKED)
+  status   RideStatus @default(SEARCHING)
 
   requested_by Customer @relation(fields: [customer_id], references: [id])
-  assigned_to  Car      @relation(fields: [car_id], references: [id])
+  assigned_to  Driver   @relation(fields: [driver_id], references: [id])
   customer_id  String
-  car_id       String
+  driver_id    String
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  RideOffer  RideOffer[]
 
-  @@index([car_id])
+  @@index([driver_id])
   @@index([customer_id])
 }
 
 enum RideStatus {
+  SEARCHING
   BOOKED
   CANCELLED
   FINISHED
 }
 
-model Event {
-  id         String    @id @default(uuid())
-  context    String?
-  type       EventType
-  info       Json?
-  created_at DateTime  @default(now())
-}
+model RideOffer {
+  id String @id @default(uuid())
 
-enum EventType {
-  RIDE_CANCELLED
-  RIDE_BOOKED
-  RIDE_FINISHED
-  FARE_PAID
-  DRIVER_PAYMENT
+  ride      Ride   @relation(fields: [ride_id], references: [id])
+  ride_id   String @unique
+  driver    Driver @relation(fields: [driver_id], references: [id])
+  driver_id String @unique
+
+  proposed_fare_kop Decimal @db.Decimal(12, 2)
 }

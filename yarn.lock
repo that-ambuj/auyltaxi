@@ -449,7 +449,7 @@
     fast-querystring "^1.0.0"
     fastify-plugin "^4.0.0"
 
-"@fastify/middie@8.3.0":
+"@fastify/middie@8", "@fastify/middie@8.3.0":
   version "8.3.0"
   resolved "https://registry.yarnpkg.com/@fastify/middie/-/middie-8.3.0.tgz#1325e9e4373c98d69366d1e38211337dee1b9ccd"
   integrity sha512-h+zBxCzMlkEkh4fM7pZaSGzqS7P9M0Z6rXnWPdUEPfe7x1BCj++wEk/pQ5jpyYY4pF8AknFqb77n7uwh8HdxEA==

@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   HealthCheck,
@@ -9,7 +9,7 @@ import {
 } from '@nestjs/terminus';
 import { PrismaService } from '@shared/prisma.service';
 
-@Controller('health')
+@Controller({ path: 'health', version: VERSION_NEUTRAL })
 export class HealthController {
   constructor(
     private health: HealthCheckService,

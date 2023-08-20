@@ -3,6 +3,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import metadata from './metadata';
@@ -12,9 +13,13 @@ import { Environment } from '@config';
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
+    new FastifyAdapter({
+      trustProxy: process.env['NODE_ENV'] === 'production',
+    }),
   );
 
+  app.enableShutdownHooks();
+  app.enableVersioning();
   app.enableCors();
 
   const configService = app.get(ConfigService);

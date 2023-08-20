@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { validate } from '@config';
 import { HealthModule } from './health/health.module';
 import { PrismaService } from './shared/prisma.service';
+import { fastifyMiddie } from '@fastify/middie';
 
 @Module({
   imports: [
@@ -14,4 +15,8 @@ import { PrismaService } from './shared/prisma.service';
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(fastifyMiddie);
+  }
+}

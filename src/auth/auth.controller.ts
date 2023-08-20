@@ -19,7 +19,7 @@ export class AuthController {
         (await this.customerService.findOneByNumber(userInfo.phone_number)) ??
         (await this.customerService.createUser(userInfo.phone_number));
 
-      this.customerService.sendOtp(user.id);
+      await this.customerService.sendOtp(user.id);
 
       return { message: 'OTP sent successfully!' };
     }

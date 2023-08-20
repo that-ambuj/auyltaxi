@@ -4,7 +4,14 @@ import { SignInDto } from './dto/signup.dto';
 import { CustomerService } from '@app/customer/customer.service';
 import { VerificationDto } from './dto/verification.dto';
 import { FastifyRequest } from 'fastify';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -13,6 +20,8 @@ export class AuthController {
   ) {}
 
   @Post('sendOtp')
+  @ApiCreatedResponse({ description: 'An OTP is sent.' })
+  @ApiBadRequestResponse({ description: 'Validation error' })
   async sendOtp(@Body() userInfo: SignInDto) {
     if (userInfo.user_type === 'customer') {
       const user =

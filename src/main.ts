@@ -10,6 +10,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import metadata from './metadata';
 import { ConfigService } from '@nestjs/config';
 import { Environment } from '@config';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -18,6 +19,8 @@ async function bootstrap() {
       trustProxy: process.env['NODE_ENV'] === 'production',
     }),
   );
+
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.register(secureSession, {
     secret: 'averylogphrasebiggerthanthirtytwochars',

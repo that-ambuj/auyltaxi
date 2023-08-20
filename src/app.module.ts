@@ -6,11 +6,15 @@ import { validate } from '@config';
 import { HealthModule } from './health/health.module';
 import { PrismaService } from './shared/prisma.service';
 import { fastifyMiddie } from '@fastify/middie';
+import { CustomerModule } from './customer/customer.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ validate, expandVariables: true }),
     HealthModule,
+    AuthModule,
+    CustomerModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

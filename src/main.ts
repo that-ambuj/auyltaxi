@@ -3,6 +3,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import secureSession from '@fastify/secure-session';
 
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -17,6 +18,11 @@ async function bootstrap() {
       trustProxy: process.env['NODE_ENV'] === 'production',
     }),
   );
+
+  await app.register(secureSession, {
+    secret: 'averylogphrasebiggerthanthirtytwochars',
+    salt: 'mq9hDxBVDbspDR6n',
+  });
 
   app.enableShutdownHooks();
   app.enableVersioning();

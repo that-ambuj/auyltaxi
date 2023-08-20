@@ -18,8 +18,21 @@ model Customer {
   phone_number String  @unique
   rides        Ride[]
 
+  created_at         DateTime            @default(now())
+  updated_at         DateTime            @updatedAt
+  CustomerPhoneToken CustomerPhoneToken?
+}
+
+model CustomerPhoneToken {
+  id String @id @default(uuid())
+
+  customer    Customer @relation(fields: [customer_id], references: [id])
+  customer_id String   @unique
+  otp         String   @unique @db.Char(6)
+
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+
+  @@index([otp])
 }
 
 model Driver {
@@ -31,6 +44,17 @@ model Driver {
   car         Car?
   rides       Ride[]
   ride_offers RideOffer[]
+
+  created_at DateTime           @default(now())
+  phone_auth DriverPhoneToken[]
+}
+
+model DriverPhoneToken {
+  id String @id @default(uuid())
+
+  driver    Driver @relation(fields: [driver_id], references: [id])
+  driver_id String @unique
+  otp       String @unique
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

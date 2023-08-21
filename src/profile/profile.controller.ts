@@ -1,4 +1,4 @@
-import { Body, Controller, Put, Req } from '@nestjs/common';
+import { Body, Controller, Get, Put, Req } from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { ProfileUpdateDto } from './dto/profile-update.dto';
 import { FastifyRequest } from 'fastify';
@@ -6,6 +6,15 @@ import { FastifyRequest } from 'fastify';
 @Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
+
+  @Get()
+  async getProfile(@Req() req: FastifyRequest) {
+    const user_id = req.session.get('session');
+
+    const user = this.profileService.findById(user_id);
+
+    return { data: user };
+  }
 
   @Put()
   async updateProfile(

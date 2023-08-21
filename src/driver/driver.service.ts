@@ -1,4 +1,5 @@
 import { OtpService } from '@app/otp.service';
+import { ProfileUpdateDto } from '@app/profile/dto/profile-update.dto';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Driver } from '@prisma/client';
 import { PrismaService } from '@shared/prisma.service';
@@ -43,6 +44,10 @@ export class DriverService {
     });
   }
 
+  async findById(id: string): Promise<Driver | undefined> {
+    return this.prisma.driver.findUnique({ where: { id } });
+  }
+
   async createUser({
     phone_number,
     name,
@@ -52,6 +57,13 @@ export class DriverService {
   }): Promise<Driver> {
     return this.prisma.driver.create({
       data: { phone_number, name },
+    });
+  }
+
+  async updateById(id: string, data: ProfileUpdateDto) {
+    return this.prisma.driver.update({
+      where: { id },
+      data,
     });
   }
 }

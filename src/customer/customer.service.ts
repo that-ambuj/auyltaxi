@@ -1,4 +1,5 @@
 import { OtpService } from '@app/otp.service';
+import { ProfileUpdateDto } from '@app/profile/dto/profile-update.dto';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Customer } from '@prisma/client';
 import { PrismaService } from '@shared/prisma.service';
@@ -47,6 +48,10 @@ export class CustomerService {
     });
   }
 
+  async findById(id: string): Promise<Customer | undefined> {
+    return this.prisma.customer.findUnique({ where: { id } });
+  }
+
   async createUser({
     phone_number,
     name,
@@ -56,6 +61,13 @@ export class CustomerService {
   }): Promise<Customer> {
     return this.prisma.customer.create({
       data: { phone_number, name },
+    });
+  }
+
+  async updateById(id: string, data: ProfileUpdateDto) {
+    return this.prisma.customer.update({
+      where: { id },
+      data,
     });
   }
 }

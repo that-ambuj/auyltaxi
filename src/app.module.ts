@@ -9,8 +9,9 @@ import { CustomerModule } from './customer/customer.module';
 import { AuthModule } from './auth/auth.module';
 import { DriverModule } from './driver/driver.module';
 import { PrismaModule } from '@shared/prisma.module';
-import { OtpService } from './otp.service';
 import { PrismaService } from '@shared/prisma.service';
+import { ProfileModule } from './profile/profile.module';
+import { OtpService } from './otp.service';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PrismaService } from '@shared/prisma.service';
     CustomerModule,
     DriverModule,
     PrismaModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   exports: [PrismaService, PrismaModule],

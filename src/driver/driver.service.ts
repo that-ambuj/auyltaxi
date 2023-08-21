@@ -60,7 +60,24 @@ export class DriverService {
   async updateById(id: string, data: ProfileUpdateDto) {
     return this.prisma.driver.update({
       where: { id },
-      data,
+      data: {
+        name: data.name,
+        car: {
+          upsert: {
+            where: { driver_id: id },
+            create: {
+              model: data.car_model,
+              brand: data.car_brand,
+              license_number: data.car_number,
+            },
+            update: {
+              model: data.car_model,
+              brand: data.car_brand,
+              license_number: data.car_number,
+            },
+          },
+        },
+      },
     });
   }
 }

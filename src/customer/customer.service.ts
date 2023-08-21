@@ -29,14 +29,14 @@ export class CustomerService {
     return this.prisma.customer.findUnique({ where: { phone_number } });
   }
 
-  async findByOtp(otp: string): Promise<Customer | undefined> {
+  async findByOtp(otp: string): Promise<Customer | null> {
     const token = await this.prisma.customerPhoneToken.findFirst({
       where: { otp },
       orderBy: { created_at: 'desc' },
     });
 
     if (!token) {
-      throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST);
+      return null;
     }
 
     return this.prisma.customer.findUnique({

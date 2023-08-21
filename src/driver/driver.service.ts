@@ -26,14 +26,14 @@ export class DriverService {
     return this.prisma.driver.findUnique({ where: { phone_number } });
   }
 
-  async findByOtp(otp: string): Promise<Driver | undefined> {
+  async findByOtp(otp: string): Promise<Driver | null> {
     const token = await this.prisma.driverPhoneToken.findFirst({
       where: { otp },
       orderBy: { created_at: 'desc' },
     });
 
     if (!token) {
-      throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST);
+      return null;
     }
 
     return this.prisma.driver.findUnique({

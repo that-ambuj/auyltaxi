@@ -29,9 +29,14 @@ export class AuthController {
     @Body() verificationInfo: VerificationDto,
   ) {
     const user = await this.authService.verifyOtp(verificationInfo.otp);
+    let is_new = false;
+
+    if (!user.name) {
+      is_new = true;
+    }
 
     req.session.set('session', user.id);
 
-    return { message: 'OTP verified!' };
+    return { message: 'OTP verified!', is_new };
   }
 }

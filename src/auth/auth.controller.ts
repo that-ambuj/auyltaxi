@@ -18,7 +18,7 @@ export class AuthController {
   @ApiCreatedResponse({ description: 'An OTP is sent.' })
   @ApiBadRequestResponse({ description: 'Validation error' })
   async sendOtp(@Body() userInfo: SignInDto) {
-    const otp = this.authService.signInWithOtp(userInfo);
+    const otp = await this.authService.signInWithOtp(userInfo);
 
     return { message: 'OTP sent successfully!', otp };
   }

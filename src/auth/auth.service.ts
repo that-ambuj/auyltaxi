@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from '@shared/prisma.service';
 import { CustomerService } from '@app/customer/customer.service';
 
 import { DriverService } from '@app/driver/driver.service';
@@ -37,10 +36,13 @@ export class AuthService {
   ): Promise<string> {
     const new_otp = this.otpService.generateOtp();
 
-    const otp =
-      user_type === 'customer'
-        ? await this.customerService.sendOtp(user_id, new_otp)
-        : await this.driverService.sendOtp(user_id);
+    let otp: string;
+
+    if (user_type === 'customer') {
+      otp = await this.customerService.sendOtp(user_id, new_otp);
+    } else {
+      otp = await this.driverService.sendOtp(user_id, new_otp);
+    }
 
     return otp;
   }

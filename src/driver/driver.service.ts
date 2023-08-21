@@ -6,19 +6,16 @@ import { PrismaService } from '@shared/prisma.service';
 
 @Injectable()
 export class DriverService {
-  constructor(
-    private prisma: PrismaService,
-    private otp: OtpService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
-  async sendOtp(driver_id: string): Promise<string> {
+  async sendOtp(driver_id: string, new_otp: string): Promise<string> {
     // Cleanup all old OTP token
     await this.prisma.driverPhoneToken.deleteMany({ where: { driver_id } });
 
     const token = await this.prisma.driverPhoneToken.create({
       data: {
         driver_id,
-        otp: this.otp.generateOtp(),
+        otp: new_otp,
       },
     });
 

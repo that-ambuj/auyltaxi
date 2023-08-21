@@ -12,19 +12,17 @@ export class CustomerService {
    * Just a dummy for now
    */
   async sendOtp(customer_id: string, otp: string): Promise<string> {
-    // TODO: send otp via SMS service provider like AWS SNS
-    return this.newOtp(customer_id, otp);
-  }
-
-  private async newOtp(customer_id: string, otp: string): Promise<string> {
     await this.prisma.customerPhoneToken.deleteMany({ where: { customer_id } });
 
+    // TODO: send otp via SMS service provider like AWS SNS
     const token = await this.prisma.customerPhoneToken.create({
       data: {
         customer_id,
         otp,
       },
     });
+
+    console.log(token);
 
     return token.otp;
   }

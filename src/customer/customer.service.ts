@@ -22,8 +22,6 @@ export class CustomerService {
       },
     });
 
-    console.log(token);
-
     return token.otp;
   }
 

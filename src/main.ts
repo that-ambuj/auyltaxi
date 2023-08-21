@@ -20,10 +20,6 @@ async function bootstrap() {
     }),
   );
 
-  app.enableShutdownHooks();
-  app.enableVersioning();
-  app.enableCors();
-
   app.useGlobalPipes(new ValidationPipe());
 
   await app.register(secureSession, {
@@ -38,6 +34,10 @@ async function bootstrap() {
       sameSite: 'strict',
     },
   });
+
+  app.enableShutdownHooks();
+  app.enableVersioning();
+  app.enableCors();
 
   const configService = app.get(ConfigService);
   const env = configService.get<Environment>('NODE_ENV');

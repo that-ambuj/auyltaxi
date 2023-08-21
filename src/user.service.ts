@@ -20,8 +20,8 @@ export class UserService {
     id: string,
     user_type: 'driver' | 'customer',
     data: ProfileUpdateDto,
-  ) {
-    let updatedUser: Driver | Customer;
+  ): Promise<Driver | Customer | null> {
+    let updatedUser: Driver | Customer = null;
 
     if (user_type === 'customer') {
       updatedUser = await this.customerService.updateById(id, data);

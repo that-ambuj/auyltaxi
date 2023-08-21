@@ -19,8 +19,6 @@ export class ProfileController {
   async getProfile(@Session() session: secureSession.Session) {
     const user_id = session.get('data');
 
-    console.log(user_id);
-
     if (!user_id) {
       throw new HttpException('User Not Logged In.', HttpStatus.FORBIDDEN);
     }
@@ -42,6 +40,9 @@ export class ProfileController {
     }
 
     const updated_user = await this.profileService.update(user_id, profileInfo);
+    if (!updated_user) {
+      throw new HttpException('User Not Logged In.', HttpStatus.FORBIDDEN);
+    }
 
     return {
       message: 'Profile Updated!',

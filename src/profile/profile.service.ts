@@ -38,12 +38,15 @@ export class ProfileService {
   async update(user_id: string, data: ProfileUpdateDto) {
     const user = await this.findById(user_id);
 
-    const updated_user = this.userService.updateById(
-      user.id,
-      user.user_type,
-      data,
-    );
+    if (!user) {
+      return null;
+    }
 
-    return updated_user;
+    const updated =
+      user.user_type == 'customer'
+        ? this.customerService.updateById(user.id, data)
+        : this.driverService.updateById(user.id, data);
+
+    return updated;
   }
 }

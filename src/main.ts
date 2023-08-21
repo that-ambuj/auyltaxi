@@ -20,16 +20,24 @@ async function bootstrap() {
     }),
   );
 
+  app.enableShutdownHooks();
+  app.enableVersioning();
+  app.enableCors();
+
   app.useGlobalPipes(new ValidationPipe());
 
   await app.register(secureSession, {
     secret: 'averylogphrasebiggerthanthirtytwochars',
     salt: 'mq9hDxBVDbspDR6n',
+    sessionName: 'session',
+    cookieName: 'auth-session',
+    cookie: {
+      path: '/',
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    },
   });
-
-  app.enableShutdownHooks();
-  app.enableVersioning();
-  app.enableCors();
 
   const configService = app.get(ConfigService);
   const env = configService.get<Environment>('NODE_ENV');

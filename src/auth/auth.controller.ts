@@ -1,8 +1,10 @@
-import { Controller, Post, Body, Req } from '@nestjs/common';
+import { Controller, Post, Body, Req, Session, Response } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signup.dto';
 import { VerificationDto } from './dto/verification.dto';
-import { FastifyRequest } from 'fastify';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import type { Session as TSession } from '@fastify/secure-session';
+
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -25,17 +27,14 @@ export class AuthController {
 
   @Post('verifyOtp')
   async verifyOtp(
-    @Req() req: FastifyRequest,
+    @Session() session: TSession,
     @Body() verificationInfo: VerificationDto,
   ) {
     const user = await this.authService.verifyOtp(verificationInfo.otp);
-    let is_new = false;
 
-    if (!user.name) {
-      is_new = true;
-    }
+    const is_new = !user.name;
 
-    req.session.set('session', user.id);
+    session.set('data', user.id);
 
     return { message: 'OTP verified!', is_new };
   }

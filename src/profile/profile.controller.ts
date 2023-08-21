@@ -1,29 +1,47 @@
-import { Body, Controller, Get, Put, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Session,
+  Put,
+} from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { ProfileUpdateDto } from './dto/profile-update.dto';
-import { FastifyRequest } from 'fastify';
+import * as secureSession from '@fastify/secure-session';
 
 @Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
   @Get()
-  async getProfile(@Req() req: FastifyRequest) {
-    const user_id = req.session.get('session');
+  async getProfile(@Session() session: secureSession.Session) {
+    const user_id = session.get('data');
 
-    const user = this.profileService.findById(user_id);
+    console.log(user_id);
+
+    if (!user_id) {
+      throw new HttpException('User Not Logged In.', HttpStatus.FORBIDDEN);
+    }
+
+    const user = await this.profileService.findById(user_id);
 
     return { data: user };
   }
 
   @Put()
   async updateProfile(
-    @Req() req: FastifyRequest,
+    @Session() session: secureSession.Session,
     @Body() profileInfo: ProfileUpdateDto,
   ) {
-    const user_id = req.session.get('session');
+    const user_id = session.get('data');
 
-    const updated_user = this.profileService.update(user_id, profileInfo);
+    if (!user_id) {
+      throw new HttpException('User Not Logged In.', HttpStatus.FORBIDDEN);
+    }
+
+    const updated_user = await this.profileService.update(user_id, profileInfo);
 
     return {
       message: 'Profile Updated!',

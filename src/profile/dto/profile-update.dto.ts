@@ -7,6 +7,7 @@ export class ProfileUpdateDto {
 
   /**
    * Car's license plate number
+   *
    * Noop in case of customer
    */
   @IsAlphanumeric()
@@ -15,6 +16,7 @@ export class ProfileUpdateDto {
 
   /**
    * Car's Model Name
+   *
    * Noop in case of customer
    *
    * @example "911 Turbo S"
@@ -24,6 +26,7 @@ export class ProfileUpdateDto {
 
   /**
    * Car's Color
+   *
    * Noop in case of customer
    *
    * @example Porsche

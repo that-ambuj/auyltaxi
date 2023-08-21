@@ -2,7 +2,15 @@
 
 ## All Users
 
+### Auth
+
+- POST `/sendOtp`
+- POST `/verifyOtp`
+
+### Profile
+
 - GET `/profile`
+- PUT `/profile`
 
 ## Rides
 

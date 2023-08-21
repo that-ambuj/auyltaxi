@@ -1,55 +1,59 @@
-import { Injectable } from '@nestjs/common';
+import { OtpService } from '@app/otp.service';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Customer } from '@prisma/client';
 import { PrismaService } from '@shared/prisma.service';
 
-import { customAlphabet } from 'nanoid';
-
 @Injectable()
 export class CustomerService {
-  rng: () => string;
-
-  constructor(private prisma: PrismaService) {
-    this.rng = customAlphabet('1234567890', 6);
-  }
-
-  async findOneByNumber(phone_number: string): Promise<Customer | undefined> {
-    return this.prisma.customer.findUnique({ where: { phone_number } });
-  }
+  constructor(private prisma: PrismaService) {}
 
   /**
    * Just a dummy for now
    */
-  async sendOtp(customer_id: string) {
-    await this.generateOtp(customer_id);
+  async sendOtp(customer_id: string, otp: string): Promise<string> {
+    // TODO: send otp via SMS service provider like AWS SNS
+    return this.newOtp(customer_id, otp);
   }
 
-  private async generateOtp(customer_id: string): Promise<string> {
-    const otp = this.rng();
-
+  private async newOtp(customer_id: string, otp: string): Promise<string> {
     await this.prisma.customerPhoneToken.deleteMany({ where: { customer_id } });
 
-    await this.prisma.customerPhoneToken.create({
+    const token = await this.prisma.customerPhoneToken.create({
       data: {
         customer_id,
         otp,
       },
     });
 
-    return otp;
+    return token.otp;
   }
 
-  async findUserByOtp(otp: string): Promise<Customer | undefined> {
+  async findOneByNumber(phone_number: string): Promise<Customer | undefined> {
+    return this.prisma.customer.findUnique({ where: { phone_number } });
+  }
+
+  async findByOtp(otp: string): Promise<Customer | undefined> {
     const token = await this.prisma.customerPhoneToken.findFirst({
       where: { otp },
       orderBy: { created_at: 'desc' },
     });
+
+    if (!token) {
+      throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST);
+    }
 
     return this.prisma.customer.findUnique({
       where: { id: token.customer_id },
     });
   }
 
-  async createUser(phone_number: string, name?: string): Promise<Customer> {
+  async createUser({
+    phone_number,
+    name,
+  }: {
+    phone_number: string;
+    name?: string;
+  }): Promise<Customer> {
     return this.prisma.customer.create({
       data: { phone_number, name },
     });

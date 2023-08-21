@@ -1,5 +1,5 @@
 /* eslint-disable */
 export default async () => {
     const t = {};
-    return { "@nestjs/swagger": { "models": [[import("./auth/dto/signup.dto"), { "SignInDto": { phone_number: { required: true, type: () => String, example: "+7 9876543219" }, name: { required: false, type: () => String, example: "John Doe" } } }], [import("./auth/dto/verification.dto"), { "VerificationDto": { otp: { required: true, type: () => String } } }]], "controllers": [[import("./app.controller"), { "AppController": { "getHello": { type: String } } }], [import("./health/health.controller"), { "HealthController": { "check": { type: Object } } }], [import("./auth/auth.controller"), { "AuthController": { "sendOtp": {}, "verifyOtp": {} } }]] } };
+    return { "@nestjs/swagger": { "models": [[import("./auth/dto/signup.dto"), { "SignInDto": { phone_number: { required: true, type: () => String, example: "+7 9876543219" }, name: { required: false, type: () => String, example: "John Doe" } } }], [import("./auth/dto/verification.dto"), { "VerificationDto": { otp: { required: true, type: () => String } } }]], "controllers": [[import("./app.controller"), { "AppController": { "getHello": { type: String } } }], [import("./health/health.controller"), { "HealthController": { "check": { type: Object } } }], [import("./auth/auth.controller"), { "AuthController": { "verifyOtp": {} } }]] } };
 };

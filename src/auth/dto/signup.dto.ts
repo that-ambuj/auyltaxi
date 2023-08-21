@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsAlpha, IsEnum, IsNotEmpty, IsPhoneNumber } from 'class-validator';
+import {
+  IsAlpha,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsPhoneNumber,
+} from 'class-validator';
 
 enum UserType {
   Customer = 'customer',
@@ -21,6 +27,7 @@ export class SignInDto {
    * @example "John Doe"
    */
   @IsAlpha()
+  @IsOptional()
   name?: string;
 
   @ApiProperty({ enum: UserType, isArray: false })

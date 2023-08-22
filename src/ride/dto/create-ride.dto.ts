@@ -9,14 +9,14 @@ export class CreateRideDto {
   /**
    * Latitude of the pickup location
    *
-   * @example 28.315757762844907
+   * @example 28.48841115843354
    */
   @IsLatitude()
   pickup_lat: number;
   /**
    * Longitude of the pickup location
    *
-   * @example 76.91433199252573
+   * @example 77.02475824162325
    */
   @IsLongitude()
   pickup_long: number;

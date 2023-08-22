@@ -1,7 +1,7 @@
-import { Customer, Driver } from '@prisma/client';
-import { CustomerService } from './customer/customer.service';
-import { DriverService } from './driver/driver.service';
-import { ProfileUpdateDto } from './profile/dto/profile-update.dto';
+import { Customer, Driver } from "@prisma/client";
+import { CustomerService } from "./customer/customer.service";
+import { DriverService } from "./driver/driver.service";
+import { ProfileUpdateDto } from "./profile/dto/profile-update.dto";
 
 export class UserService {
   constructor(
@@ -18,12 +18,12 @@ export class UserService {
 
   async updateById(
     id: string,
-    user_type: 'driver' | 'customer',
+    user_type: "driver" | "customer",
     data: ProfileUpdateDto,
   ): Promise<Driver | Customer | null> {
     let updatedUser: Driver | Customer = null;
 
-    if (user_type === 'customer') {
+    if (user_type === "customer") {
       updatedUser = await this.customerService.updateById(id, data);
     } else {
       updatedUser = await this.driverService.updateById(id, data);

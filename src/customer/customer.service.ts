@@ -1,11 +1,11 @@
-import { ProfileUpdateDto } from '@app/profile/dto/profile-update.dto';
-import { PickType } from '@nestjs/mapped-types';
-import { Injectable } from '@nestjs/common';
-import { Customer } from '@prisma/client';
-import { PrismaService } from '@shared/prisma.service';
+import { ProfileUpdateDto } from "@app/profile/dto/profile-update.dto";
+import { PickType } from "@nestjs/mapped-types";
+import { Injectable } from "@nestjs/common";
+import { Customer } from "@prisma/client";
+import { PrismaService } from "@shared/prisma.service";
 
 class CustomerProfileDto extends PickType(ProfileUpdateDto, [
-  'name',
+  "name",
 ] as const) {}
 
 @Injectable()
@@ -36,7 +36,7 @@ export class CustomerService {
   async findByOtp(otp: string): Promise<Customer | null> {
     const token = await this.prisma.customerPhoneToken.findFirst({
       where: { otp },
-      orderBy: { created_at: 'desc' },
+      orderBy: { created_at: "desc" },
     });
 
     if (!token) {

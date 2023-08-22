@@ -1,9 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber } from "class-validator";
 
 enum UserType {
-  Customer = 'customer',
-  Driver = 'driver',
+  Customer = "customer",
+  Driver = "driver",
 }
 
 /**
@@ -13,7 +13,7 @@ export class SignInDto {
   /**
    * @example "+7 9876543219"
    */
-  @IsPhoneNumber('KZ')
+  @IsPhoneNumber("KZ")
   @IsNotEmpty()
   phone_number: string;
 

@@ -1,10 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CustomerService } from '@app/customer/customer.service';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { CustomerService } from "@app/customer/customer.service";
 
-import { DriverService } from '@app/driver/driver.service';
-import { OtpService } from '@app/otp.service';
-import { SignInDto } from './dto/signup.dto';
-import { Customer, Driver } from '@prisma/client';
+import { DriverService } from "@app/driver/driver.service";
+import { OtpService } from "@app/otp.service";
+import { SignInDto } from "./dto/signup.dto";
+import { Customer, Driver } from "@prisma/client";
 
 @Injectable()
 export class AuthService {
@@ -17,7 +17,7 @@ export class AuthService {
   async signInWithOtp(userInfo: SignInDto) {
     let user: Driver | Customer;
 
-    if (userInfo.user_type === 'customer') {
+    if (userInfo.user_type === "customer") {
       user =
         (await this.customerService.findOneByNumber(userInfo.phone_number)) ??
         (await this.customerService.createUser(userInfo));
@@ -32,13 +32,13 @@ export class AuthService {
 
   async sendOtp(
     user_id: string,
-    user_type: 'customer' | 'driver',
+    user_type: "customer" | "driver",
   ): Promise<string> {
     const new_otp = this.otpService.generateOtp();
 
     let otp: string;
 
-    if (user_type === 'customer') {
+    if (user_type === "customer") {
       otp = await this.customerService.sendOtp(user_id, new_otp);
     } else {
       otp = await this.driverService.sendOtp(user_id, new_otp);
@@ -53,8 +53,8 @@ export class AuthService {
       (await this.driverService.findByOtp(otp));
 
     if (!user) {
-      throw new HttpException('Invalid OTP', HttpStatus.BAD_REQUEST, {
-        cause: 'User not found',
+      throw new HttpException("Invalid OTP", HttpStatus.BAD_REQUEST, {
+        cause: "User not found",
       });
     }
 

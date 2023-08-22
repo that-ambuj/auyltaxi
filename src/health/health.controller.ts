@@ -1,15 +1,15 @@
-import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Controller, Get, VERSION_NEUTRAL } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import {
   HealthCheck,
   HealthCheckService,
   HttpHealthIndicator,
   MemoryHealthIndicator,
   PrismaHealthIndicator,
-} from '@nestjs/terminus';
-import { PrismaService } from '@shared/prisma.service';
+} from "@nestjs/terminus";
+import { PrismaService } from "@shared/prisma.service";
 
-@Controller({ path: 'health', version: VERSION_NEUTRAL })
+@Controller({ path: "health", version: VERSION_NEUTRAL })
 export class HealthController {
   constructor(
     private health: HealthCheckService,
@@ -20,14 +20,14 @@ export class HealthController {
     private memory: MemoryHealthIndicator,
   ) {}
 
-  @Get('json')
+  @Get("json")
   @HealthCheck()
   check() {
     return this.health.check([
       () =>
-        this.http.pingCheck('home-page', this.config.get('APP_URL') + '/hello'),
-      () => this.prismaHealth.pingCheck('database', this.prisma),
-      () => this.memory.checkHeap('heap-memory', 150 * 1024 * 1024),
+        this.http.pingCheck("home-page", this.config.get("APP_URL") + "/hello"),
+      () => this.prismaHealth.pingCheck("database", this.prisma),
+      () => this.memory.checkHeap("heap-memory", 150 * 1024 * 1024),
     ]);
   }
 }

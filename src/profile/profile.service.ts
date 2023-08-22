@@ -1,12 +1,12 @@
-import { UserService } from '@app/user.service';
-import { Injectable } from '@nestjs/common';
-import { Customer, Driver } from '@prisma/client';
-import { ProfileUpdateDto } from './dto/profile-update.dto';
-import { DriverService } from '@app/driver/driver.service';
-import { CustomerService } from '@app/customer/customer.service';
+import { UserService } from "@app/user.service";
+import { Injectable } from "@nestjs/common";
+import { Customer, Driver } from "@prisma/client";
+import { ProfileUpdateDto } from "./dto/profile-update.dto";
+import { DriverService } from "@app/driver/driver.service";
+import { CustomerService } from "@app/customer/customer.service";
 
 type UserType = {
-  user_type: 'customer' | 'driver';
+  user_type: "customer" | "driver";
 };
 
 @Injectable()
@@ -24,12 +24,12 @@ export class ProfileService {
 
     user = await this.customerService.findById(id);
     if (user) {
-      return { ...user, user_type: 'customer' };
+      return { ...user, user_type: "customer" };
     }
 
     user = await this.driverService.findById(id);
     if (user) {
-      return { ...user, user_type: 'driver' };
+      return { ...user, user_type: "driver" };
     }
 
     return null;
@@ -43,7 +43,7 @@ export class ProfileService {
     }
 
     const updated =
-      user.user_type == 'customer'
+      user.user_type == "customer"
         ? this.customerService.updateById(user.id, data)
         : this.driverService.updateById(user.id, data);
 

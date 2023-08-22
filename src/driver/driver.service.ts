@@ -1,8 +1,8 @@
-import { OtpService } from '@app/otp.service';
-import { ProfileUpdateDto } from '@app/profile/dto/profile-update.dto';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Driver } from '@prisma/client';
-import { PrismaService } from '@shared/prisma.service';
+import { OtpService } from "@app/otp.service";
+import { ProfileUpdateDto } from "@app/profile/dto/profile-update.dto";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { Driver } from "@prisma/client";
+import { PrismaService } from "@shared/prisma.service";
 
 @Injectable()
 export class DriverService {
@@ -29,7 +29,7 @@ export class DriverService {
   async findByOtp(otp: string): Promise<Driver | null> {
     const token = await this.prisma.driverPhoneToken.findFirst({
       where: { otp },
-      orderBy: { created_at: 'desc' },
+      orderBy: { created_at: "desc" },
     });
 
     if (!token) {

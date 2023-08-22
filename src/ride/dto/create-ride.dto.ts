@@ -10,12 +10,12 @@ export class CreateRideDto {
    * Longitude of the pickup location
    */
   @IsLongitude()
-  pickup_long: string;
+  pickup_long: number;
   /**
    * Latitude of the pickup location
    */
   @IsLatitude()
-  pickup_lat: string;
+  pickup_lat: number;
   /**
    * Arbitrary name of the pickup location
    */
@@ -26,12 +26,12 @@ export class CreateRideDto {
    * Longitude of the drop location
    */
   @IsLongitude()
-  drop_long: string;
+  drop_long: number;
   /**
    * Latitude of the drop location
    */
   @IsLatitude()
-  drop_lat: string;
+  drop_lat: number;
   /**
    * Arbitrary name of the drop location
    */
@@ -52,5 +52,5 @@ export class CreateRideDto {
    * @example 150
    */
   @IsNumberString()
-  requested_fare: string;
+  requested_fare: number;
 }

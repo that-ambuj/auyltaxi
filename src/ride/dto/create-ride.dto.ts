@@ -3,7 +3,7 @@ import {
   IsLongitude,
   IsNumberString,
   IsOptional,
-} from 'class-validator';
+} from "class-validator";
 
 export class CreateRideDto {
   /**

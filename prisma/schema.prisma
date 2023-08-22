@@ -73,13 +73,19 @@ model Car {
 model Ride {
   id String @id @default(uuid())
 
-  orig_long Decimal @db.Decimal(20, 15)
-  orig_lat  Decimal @db.Decimal(20, 15)
-  dest_long Decimal @db.Decimal(20, 15)
-  dest_lat  Decimal @db.Decimal(20, 15)
+  pickup_long Decimal @db.Decimal(20, 15)
+  pickup_lat  Decimal @db.Decimal(20, 15)
+  pickup_name String?
+  drop_long   Decimal @db.Decimal(20, 15)
+  drop_lat    Decimal @db.Decimal(20, 15)
+  drop_name   String?
 
-  fare_kop Decimal    @db.Decimal(12, 2)
-  status   RideStatus @default(SEARCHING)
+  comment String?
+
+  requested_fare Decimal  @db.Decimal(12, 2)
+  confirmed_fare Decimal? @db.Decimal(12, 2)
+
+  status RideStatus @default(SEARCHING)
 
   requested_by Customer @relation(fields: [customer_id], references: [id])
   customer_id  String
@@ -104,11 +110,11 @@ enum RideStatus {
 model RideOffer {
   id String @id @default(uuid())
 
-  ride              Ride    @relation(fields: [ride_id], references: [id])
-  ride_id           String  @unique
-  driver            Driver  @relation(fields: [driver_id], references: [id])
-  driver_id         String  @unique
-  proposed_fare_kop Decimal @db.Decimal(12, 2)
+  ride          Ride    @relation(fields: [ride_id], references: [id])
+  ride_id       String  @unique
+  driver        Driver  @relation(fields: [driver_id], references: [id])
+  driver_id     String  @unique
+  proposed_fare Decimal @db.Decimal(12, 2)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

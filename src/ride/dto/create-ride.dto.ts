@@ -7,15 +7,19 @@ import {
 
 export class CreateRideDto {
   /**
-   * Longitude of the pickup location
-   */
-  @IsLongitude()
-  pickup_long: number;
-  /**
    * Latitude of the pickup location
+   *
+   * @example 28.315757762844907
    */
   @IsLatitude()
   pickup_lat: number;
+  /**
+   * Longitude of the pickup location
+   *
+   * @example 76.91433199252573
+   */
+  @IsLongitude()
+  pickup_long: number;
   /**
    * Arbitrary name of the pickup location
    */
@@ -23,15 +27,19 @@ export class CreateRideDto {
   pickup_name?: string;
 
   /**
-   * Longitude of the drop location
-   */
-  @IsLongitude()
-  drop_long: number;
-  /**
    * Latitude of the drop location
+   *
+   * @example 28.315757762844907
    */
   @IsLatitude()
   drop_lat: number;
+  /**
+   * Longitude of the drop location
+   *
+   * @example 76.91433199252573
+   */
+  @IsLongitude()
+  drop_long: number;
   /**
    * Arbitrary name of the drop location
    */

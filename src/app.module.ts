@@ -12,6 +12,7 @@ import { PrismaModule } from '@shared/prisma.module';
 import { PrismaService } from '@shared/prisma.service';
 import { ProfileModule } from './profile/profile.module';
 import { OtpService } from './otp.service';
+import { RideModule } from './ride/ride.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { OtpService } from './otp.service';
     DriverModule,
     PrismaModule,
     ProfileModule,
+    RideModule,
   ],
   controllers: [AppController],
   exports: [PrismaService, PrismaModule],

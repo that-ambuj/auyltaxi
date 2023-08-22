@@ -1,4 +1,4 @@
-import { IsAlphanumeric, IsNotIn, IsOptional } from 'class-validator';
+import { IsOptional } from 'class-validator';
 
 export class ProfileUpdateDto {
   @IsOptional()
@@ -9,7 +9,6 @@ export class ProfileUpdateDto {
    *
    * Noop in case of customer
    */
-  @IsAlphanumeric()
   @IsOptional()
   car_number?: string;
 

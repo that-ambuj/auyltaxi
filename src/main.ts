@@ -20,8 +20,6 @@ async function bootstrap() {
     }),
   );
 
-  app.useGlobalPipes(new ValidationPipe());
-
   await app.register(secureSession, {
     secret: 'averylogphrasebiggerthanthirtytwochars',
     salt: 'mq9hDxBVDbspDR6n',
@@ -35,9 +33,11 @@ async function bootstrap() {
     },
   });
 
-  app.enableShutdownHooks();
+  // app.enableShutdownHooks();
   app.enableVersioning();
   app.enableCors();
+
+  app.useGlobalPipes(new ValidationPipe({ forbidUnknownValues: true }));
 
   const configService = app.get(ConfigService);
   const env = configService.get<Environment>('NODE_ENV');

@@ -1,8 +1,12 @@
-import { OtpService } from '@app/otp.service';
 import { ProfileUpdateDto } from '@app/profile/dto/profile-update.dto';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { PickType } from '@nestjs/mapped-types';
+import { Injectable } from '@nestjs/common';
 import { Customer } from '@prisma/client';
 import { PrismaService } from '@shared/prisma.service';
+
+class CustomerProfileDto extends PickType(ProfileUpdateDto, [
+  'name',
+] as const) {}
 
 @Injectable()
 export class CustomerService {
@@ -60,10 +64,12 @@ export class CustomerService {
     });
   }
 
-  async updateById(id: string, data: ProfileUpdateDto) {
+  async updateById(id: string, data: CustomerProfileDto) {
     return this.prisma.customer.update({
       where: { id },
-      data,
+      data: {
+        name: data.name,
+      },
     });
   }
 }

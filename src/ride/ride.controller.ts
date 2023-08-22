@@ -2,11 +2,13 @@ import {
   Body,
   Controller,
   Param,
+  Get,
   Post,
   Put,
   Req,
   UnauthorizedException,
   UseGuards,
+  NotFoundException,
 } from "@nestjs/common";
 import { RideService } from "./ride.service";
 import { CreateRideDto } from "./dto/create-ride.dto";
@@ -21,6 +23,26 @@ import { ApiTags } from "@nestjs/swagger";
 @Controller("ride")
 export class RideController {
   constructor(private readonly rideService: RideService) {}
+
+  @Get()
+  async getRides(@Req() req: FastifyRequest): Promise<Ride[]> {
+    const user = req["user"] as Customer;
+
+    return this.rideService.findAll(user.id);
+  }
+
+  @Get(":id")
+  async getRideById(
+    @Param("id") id: string,
+    @Req() req: FastifyRequest,
+  ): Promise<Ride> {
+    const user = req["user"] as Customer;
+
+    const ride = await this.rideService.findById(user.id, id);
+    if (!ride) throw new NotFoundException(`Ride with id: ${id} not found.`);
+
+    return ride;
+  }
 
   @Post()
   async createRide(
@@ -42,7 +64,7 @@ export class RideController {
 
     const updated_ride = await this.rideService.updateRide(ride, user.id, id);
     if (!updated_ride)
-      throw new UnauthorizedException("This ride does not belong to this user");
+      throw new NotFoundException(`Ride with id: ${id} not found.`);
 
     return updated_ride;
   }
@@ -51,12 +73,12 @@ export class RideController {
   async cancelRide(
     @Param("id") id: string,
     @Req() req: FastifyRequest,
-  ): Promise<Ride | null> {
+  ): Promise<Ride> {
     const user = req["user"] as Customer;
 
     const updated_ride = await this.rideService.cancelRide(user.id, id);
     if (!updated_ride)
-      throw new UnauthorizedException("This ride does not belong to this user");
+      throw new NotFoundException(`Ride with id: ${id} not found.`);
 
     return updated_ride;
   }

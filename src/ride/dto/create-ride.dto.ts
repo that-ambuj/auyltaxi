@@ -1,6 +1,7 @@
 import {
   IsLatitude,
   IsLongitude,
+  IsNumber,
   IsNumberString,
   IsOptional,
 } from "class-validator";
@@ -59,6 +60,6 @@ export class CreateRideDto {
    *
    * @example 150
    */
-  @IsNumberString()
+  @IsNumber()
   requested_fare: number;
 }

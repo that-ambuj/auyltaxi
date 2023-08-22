@@ -8,8 +8,15 @@ import { UpdateRideDto } from "./dto/update-ride.dto";
 export class RideService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findById(id: string): Promise<Ride | null> {
-    return this.prisma.ride.findUnique({ where: { id } });
+  async findAll(customer_id: string): Promise<Ride[]> {
+    return this.prisma.ride.findMany({ where: { customer_id } });
+  }
+
+  async findById(customer_id: string, id: string): Promise<Ride | null> {
+    return this.prisma.ride.findUnique({
+      where: { customer_id, id },
+      include: { assigned_to: true },
+    });
   }
 
   async createRide(data: CreateRideDto, customer_id: string): Promise<Ride> {

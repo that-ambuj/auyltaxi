@@ -1,0 +1,6 @@
+export enum RideStatus {
+  SEARCHING = "SEARCHING",
+  BOOKED = "BOOKED",
+  CANCELLED = "CANCELLED",
+  FINISHED = "FINISHED",
+}

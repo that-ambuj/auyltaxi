@@ -6,9 +6,9 @@ import {
   Post,
   Put,
   Req,
-  UnauthorizedException,
   UseGuards,
   NotFoundException,
+  Query,
 } from "@nestjs/common";
 import { RideService } from "./ride.service";
 import { CreateRideDto } from "./dto/create-ride.dto";
@@ -16,19 +16,31 @@ import { Customer, Ride } from "@prisma/client";
 import { UpdateRideDto } from "./dto/update-ride.dto";
 import { CustomerGuard } from "@app/customer/customer.guard";
 import { FastifyRequest } from "fastify";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiQuery, ApiTags } from "@nestjs/swagger";
+import { RideStatus } from "./dto/ride-status.dto";
 
-@ApiTags("ride")
+@ApiTags("rides")
 @UseGuards(CustomerGuard)
-@Controller("ride")
+@Controller("rides")
 export class RideController {
   constructor(private readonly rideService: RideService) {}
 
   @Get()
-  async getRides(@Req() req: FastifyRequest): Promise<Ride[]> {
+  @ApiQuery({
+    name: "status",
+    enum: RideStatus,
+    enumName: "RideStatus",
+    required: false,
+    isArray: true,
+  })
+  async getRides(
+    @Req() req: FastifyRequest,
+    @Query("status")
+    status?: RideStatus | RideStatus[],
+  ): Promise<Ride[]> {
     const user = req["user"] as Customer;
 
-    return this.rideService.findAll(user.id);
+    return this.rideService.findAll(user.id, status);
   }
 
   @Get(":id")

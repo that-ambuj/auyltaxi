@@ -39,20 +39,21 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ forbidUnknownValues: true }));
 
-  const configService = app.get(ConfigService);
-  const env = configService.get<Environment>("NODE_ENV");
+  const config_service = app.get(ConfigService);
+  const env = config_service.get<Environment>("NODE_ENV");
 
   if (env === "development") {
-    const swaggerConfig = new DocumentBuilder()
+    const swagger_config = new DocumentBuilder()
       .setTitle("auyltaxi API")
       .setVersion("1.0")
       .build();
 
     await SwaggerModule.loadPluginMetadata(metadata);
-    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    const document = SwaggerModule.createDocument(app, swagger_config);
     SwaggerModule.setup("api", app, document);
   }
 
   await app.listen(3000);
 }
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
 bootstrap();

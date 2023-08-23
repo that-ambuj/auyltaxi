@@ -1,6 +1,7 @@
 export enum RideOfferStatus {
-  Pending = "PENDING",
-  Accepted = "ACCEPTED",
-  Rejected = "REJECTED",
-  Cancelled = "CANCELLED",
+  PENDING = "PENDING",
+  ACCEPTED = "ACCEPTED",
+  REJECTED = "REJECTED",
+  CANCELLED_BY_CUSTOMER = "CANCELLED_BY_CUSTOMER",
+  CANCELLED_BY_DRIVER = "CANCELLED_BY_DRIVER",
 }

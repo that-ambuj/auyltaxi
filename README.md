@@ -29,14 +29,26 @@ You'll need to run `prisma db push` every time the `./prisma/schema.prisma` is u
 
 ```bash
 # development
-$ yarn run start
+$ yarn start
 
 # watch mode
-$ yarn run start:dev
+$ yarn start:dev
 
 # PRODUCTION MODE
-$ yarn run start:prod
+$ yarn start:prod
 ```
+
+## Documentation
+
+### OpenAPI (Swagger)
+
+To see the Swagger UI view for all the APIs visit `/api`, this allows you to easily test the API using a web GUI.
+
+To get the `JSON` spec of the API visit `/api-json`
+
+Similarly for the `YAML` spec, goto `/api-yaml`
+
+Please note, the `JSON` and `YAML` spec files can be easily imported into REST clients like Postman and Insomnia.
 
 ## Production mode
 
@@ -44,7 +56,14 @@ The production mode can be enabled by setting `NODE_ENV=production` or by runnin
 
 ```bash
 $ yarn build
+
 $ yarn start:prod
 ```
 
-It disables the `/api` endpoint for **Swagger UI**
+It is necessary to run `yarn build` before everytime running `yarn start:prod`. Since, in production mode
+node.js runs the compiled `.js` files instead of `.ts` files
+
+There are a few effects of running the app in production mode but they are mostly there for security reasons.
+
+- It disables the `/api` endpoints for **Swagger**.
+- It enables to option to "trust proxy", so that a reverse proxy like nginx can easily access the server.

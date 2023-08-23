@@ -23,10 +23,13 @@ export class RideOffersService {
     return this.prisma.rideOffer.findMany({ where: { driver_id, status } });
   }
 
-  async findAllByRideId(
-    ride_id: string,
-    status?: RideOfferStatus | RideOfferStatus[],
-  ) {
+  async findAllByRideId({
+    ride_id,
+    status,
+  }: {
+    ride_id: string;
+    status?: RideOfferStatus | RideOfferStatus[];
+  }) {
     if (Array.isArray(status)) {
       const status_arr = status.map((s) => ({ status: s }));
 
@@ -64,10 +67,26 @@ export class RideOffersService {
     });
   }
 
-  async cancelRide({ id, driver_id }: { id: string; driver_id: string }) {
+  async cancelRideOffer({ id, driver_id }: { id: string; driver_id: string }) {
     return this.prisma.rideOffer.update({
       where: { id, driver_id },
-      data: { status: "CANCELLED" },
+      data: { status: "CANCELLED_BY_DRIVER" },
+    });
+  }
+
+  /**
+   * WARNING: This method should only be used by the customer or related controllers
+   */
+  async acceptRideOffer({ id, ride_id }: { id: string; ride_id: string }) {
+    // Reject all the other offers
+    await this.prisma.rideOffer.updateMany({
+      where: { NOT: { id }, ride_id },
+      data: { status: "REJECTED" },
+    });
+
+    return this.prisma.rideOffer.update({
+      where: { id, ride_id },
+      data: { status: "ACCEPTED" },
     });
   }
 }

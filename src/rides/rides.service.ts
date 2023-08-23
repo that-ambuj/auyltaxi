@@ -4,10 +4,14 @@ import { CreateRideDto } from "./dto/create-ride.dto";
 import { Ride } from "@prisma/client";
 import { UpdateRideDto } from "./dto/update-ride.dto";
 import { RideStatus } from "./dto/ride-status.dto";
+import { RideOffersService } from "@app/ride-offers/ride-offers.service";
 
 @Injectable()
 export class RideService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly rideOfferService: RideOffersService,
+  ) {}
 
   async findAll(
     customer_id: string,
@@ -53,10 +57,42 @@ export class RideService {
     });
   }
 
+  async acceptRideOffer({
+    customer_id,
+    ride_id,
+    offer_id,
+  }: {
+    customer_id: string;
+    ride_id: string;
+    offer_id: string;
+  }) {
+    const updated_offer = await this.rideOfferService.acceptRideOffer({
+      id: offer_id,
+      ride_id,
+    });
+
+    return this.prisma.ride.update({
+      where: { id: ride_id, customer_id },
+      data: {
+        status: "BOOKED",
+        driver_id: updated_offer.driver_id,
+        confirmed_fare: updated_offer.proposed_fare,
+      },
+    });
+  }
+
   async cancelRide(customer_id: string, ride_id: string): Promise<Ride | null> {
     return this.prisma.ride.update({
       where: { customer_id, id: ride_id },
-      data: { status: "CANCELLED" },
+      data: {
+        status: "CANCELLED",
+        ride_offers: {
+          updateMany: {
+            where: { ride_id },
+            data: { status: "CANCELLED_BY_CUSTOMER" },
+          },
+        },
+      },
     });
   }
 }

@@ -77,7 +77,7 @@ export class RideOffersController {
   async cancelRideOffer(@Req() req: FastifyRequest, @Param("id") id: string) {
     const driver = req["user"] as Driver;
 
-    const updated_offer = await this.rideOffersService.cancelRide({
+    const updated_offer = await this.rideOffersService.cancelRideOffer({
       id,
       driver_id: driver.id,
     });

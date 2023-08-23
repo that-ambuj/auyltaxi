@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { RideService } from "./ride.service";
-import { RideController } from "./ride.controller";
+import { RideService } from "./rides.service";
+import { RideController } from "./rides.controller";
 
 @Module({
   controllers: [RideController],

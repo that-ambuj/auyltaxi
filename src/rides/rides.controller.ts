@@ -10,7 +10,7 @@ import {
   NotFoundException,
   Query,
 } from "@nestjs/common";
-import { RideService } from "./ride.service";
+import { RideService } from "./rides.service";
 import { CreateRideDto } from "./dto/create-ride.dto";
 import { Customer, Ride } from "@prisma/client";
 import { UpdateRideDto } from "./dto/update-ride.dto";
@@ -19,7 +19,7 @@ import { FastifyRequest } from "fastify";
 import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { RideStatus } from "./dto/ride-status.dto";
 
-@ApiTags("rides")
+@ApiTags("Rides (customer)")
 @UseGuards(CustomerGuard)
 @Controller("rides")
 export class RideController {

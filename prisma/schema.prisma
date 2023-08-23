@@ -45,6 +45,10 @@ model Driver {
   rides       Ride[]
   ride_offers RideOffer[]
 
+  // Driver's last known location
+  last_lat  Decimal? @db.Decimal(20, 15)
+  last_long Decimal? @db.Decimal(20, 15)
+
   created_at DateTime           @default(now())
   phone_auth DriverPhoneToken[]
 }

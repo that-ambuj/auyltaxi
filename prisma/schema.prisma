@@ -110,12 +110,22 @@ enum RideStatus {
 model RideOffer {
   id String @id @default(uuid())
 
-  ride          Ride    @relation(fields: [ride_id], references: [id])
-  ride_id       String  @unique
-  driver        Driver  @relation(fields: [driver_id], references: [id])
-  driver_id     String  @unique
-  proposed_fare Decimal @db.Decimal(12, 2)
+  ride          Ride        @relation(fields: [ride_id], references: [id])
+  ride_id       String
+  driver        Driver      @relation(fields: [driver_id], references: [id])
+  driver_id     String
+  proposed_fare Decimal     @db.Decimal(12, 2)
+  status        OfferStatus @default(PENDING)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  @@index([ride_id])
+  @@index([driver_id])
+}
+
+enum OfferStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }

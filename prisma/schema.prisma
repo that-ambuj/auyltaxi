@@ -99,8 +99,8 @@ model Ride {
   assigned_to  Driver?  @relation(fields: [driver_id], references: [id])
   driver_id    String?
 
-  created_at  DateTime    @default(now())
-  updated_at  DateTime    @updatedAt
+  created_at  DateTime    @unique @default(now())
+  updated_at  DateTime    @unique @updatedAt
   ride_offers RideOffer[]
 
   @@index([driver_id])
@@ -124,8 +124,8 @@ model RideOffer {
   proposed_fare Decimal     @db.Decimal(12, 2)
   status        OfferStatus @default(PENDING)
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime @unique @default(now())
+  updated_at DateTime @unique @updatedAt
 
   @@index([ride_id])
   @@index([driver_id])

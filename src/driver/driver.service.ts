@@ -1,7 +1,6 @@
-import { OtpService } from "@app/otp.service";
 import { ProfileUpdateDto } from "@app/profile/dto/profile-update.dto";
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { Driver } from "@prisma/client";
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { Driver, Ride } from "@prisma/client";
 import { PrismaService } from "@shared/prisma.service";
 
 @Injectable()
@@ -58,6 +57,12 @@ export class DriverService {
   }
 
   async updateById(id: string, data: ProfileUpdateDto) {
+    const info = {
+      model: data.car_model,
+      brand: data.car_brand,
+      license_number: data.car_number,
+    };
+
     return this.prisma.driver.update({
       where: { id },
       data: {
@@ -65,19 +70,111 @@ export class DriverService {
         car: {
           upsert: {
             where: { driver_id: id },
-            create: {
-              model: data.car_model,
-              brand: data.car_brand,
-              license_number: data.car_number,
-            },
-            update: {
-              model: data.car_model,
-              brand: data.car_brand,
-              license_number: data.car_number,
-            },
+            create: info,
+            update: info,
           },
         },
       },
     });
   }
+
+  async updateLocation({
+    id,
+    lat,
+    long,
+  }: {
+    id: string;
+    lat: number;
+    long: number;
+  }) {
+    return this.prisma.driver.update({
+      where: { id },
+      data: { last_lat: lat, last_long: long },
+      select: { id: true, last_lat: true, last_long: true },
+    });
+  }
+
+  async getLocation({ id }: { id: string }) {
+    return this.prisma.driver.findUnique({
+      where: { id },
+      select: { id: true, last_long: true, last_lat: true },
+    });
+  }
+
+  async getNearbyRides({
+    id,
+    take = 10,
+    skip,
+    cursor,
+    max_distance = 1,
+  }: {
+    id: string;
+    take?: number;
+    skip?: number;
+    cursor?: Date;
+    max_distance?: number;
+  }) {
+    const { last_lat, last_long } = await this.getLocation({ id });
+
+    if (!last_lat || !last_long) {
+      throw new BadRequestException(
+        "Please update driver's location at least once before looking for nearby rides.",
+      );
+    }
+
+    const orig = { lat: last_lat.toNumber(), long: last_long.toNumber() };
+
+    let rides;
+
+    if (!cursor) {
+      rides = await this.prisma.ride.findMany({
+        where: { status: "SEARCHING" },
+        orderBy: { created_at: "asc" },
+        skip,
+        take,
+      });
+    } else {
+      rides = await this.prisma.ride.findMany({
+        where: { status: "SEARCHING" },
+        orderBy: { created_at: "asc" },
+        cursor: { created_at: cursor },
+        skip: 1,
+        take,
+      });
+    }
+
+    const results = rides.filter(({ pickup_lat, pickup_long }) => {
+      const distance = haversineDistance({
+        orig,
+        dest: { lat: pickup_lat.toNumber(), long: pickup_long.toNumber() },
+      });
+
+      return distance <= max_distance;
+    });
+
+    return results;
+  }
+}
+
+function haversineDistance({
+  orig,
+  dest,
+}: {
+  orig: { lat: number; long: number };
+  dest: { lat: number; long: number };
+}) {
+  const R = 6371; // Earth's radius in km
+  const d_lat = ((dest.lat - orig.lat) * Math.PI) / 180;
+  const d_long = ((dest.long - orig.long) * Math.PI) / 180;
+  const a =
+    Math.sin(d_lat / 2) * Math.sin(d_lat / 2) +
+    Math.cos((orig.lat * Math.PI) / 180) *
+      Math.cos((dest.lat * Math.PI) / 180) *
+      Math.sin(d_long / 2) *
+      Math.sin(d_long / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  const distance = R * c;
+
+  return distance;
 }

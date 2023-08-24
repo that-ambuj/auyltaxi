@@ -1,9 +1,10 @@
 import { Module } from "@nestjs/common";
 import { DriverService } from "./driver.service";
-import { OtpService } from "@app/otp.service";
 import { PrismaService } from "@shared/prisma.service";
+import { DriverController } from "./driver.controller";
 
 @Module({
-  providers: [DriverService, OtpService, PrismaService],
+  controllers: [DriverController],
+  providers: [DriverService, PrismaService],
 })
 export class DriverModule {}

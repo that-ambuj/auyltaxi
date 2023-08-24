@@ -37,7 +37,9 @@ async function bootstrap() {
   app.enableVersioning();
   app.enableCors();
 
-  app.useGlobalPipes(new ValidationPipe({ forbidUnknownValues: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({ forbidUnknownValues: true, transform: true }),
+  );
 
   const config_service = app.get(ConfigService);
   const env = config_service.get<Environment>("NODE_ENV");

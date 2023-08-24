@@ -13,20 +13,31 @@ export class RideService {
     private readonly rideOfferService: RideOffersService,
   ) {}
 
-  async findAll(
-    customer_id: string,
-    status?: RideStatus | RideStatus[],
-  ): Promise<Ride[]> {
+  async findAll({
+    customer_id,
+    status,
+    take = 10,
+    skip,
+  }: {
+    customer_id: string;
+    status?: RideStatus | RideStatus[];
+    take?: number;
+    skip?: number;
+  }): Promise<Ride[]> {
     if (Array.isArray(status)) {
       const status_arr = status.map((s) => ({ status: s }));
 
       return this.prisma.ride.findMany({
         where: { customer_id, OR: status_arr },
+        skip,
+        take,
       });
     }
 
     return this.prisma.ride.findMany({
       where: { customer_id, status },
+      skip,
+      take,
     });
   }
 

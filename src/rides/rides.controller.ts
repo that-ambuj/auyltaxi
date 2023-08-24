@@ -10,6 +10,7 @@ import {
   NotFoundException,
   Query,
   ForbiddenException,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { RideService } from "./rides.service";
 import { CreateRideDto } from "./dto/create-ride.dto";
@@ -21,6 +22,7 @@ import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { RideStatus } from "./dto/ride-status.dto";
 import { RideOffersService } from "@app/ride-offers/ride-offers.service";
 import { RideOfferStatus } from "@app/ride-offers/dto/ride-offer-status.dto";
+import { GetRidesDto } from "./dto/get-rides.dto";
 
 @ApiTags("Rides (customer)")
 @UseGuards(CustomerGuard)
@@ -41,12 +43,18 @@ export class RideController {
   })
   async getRides(
     @Req() req: FastifyRequest,
-    @Query("status")
-    status?: RideStatus | RideStatus[],
+    @Query() data: GetRidesDto,
   ): Promise<Ride[]> {
     const user = req["user"] as Customer;
 
-    return this.rideService.findAll(user.id, status);
+    const skip = (data.page - 1) * data.limit;
+
+    return this.rideService.findAll({
+      customer_id: user.id,
+      status: data.status,
+      skip,
+      take: data.limit,
+    });
   }
 
   @Get(":id")
@@ -69,10 +77,10 @@ export class RideController {
   ): Promise<Ride> {
     const user = req["user"] as Customer;
 
-    const existing_rides = await this.rideService.findAll(
-      user.id,
-      RideStatus.SEARCHING,
-    );
+    const existing_rides = await this.rideService.findAll({
+      customer_id: user.id,
+      status: RideStatus.SEARCHING,
+    });
 
     if (existing_rides.length > 0) {
       throw new ForbiddenException(

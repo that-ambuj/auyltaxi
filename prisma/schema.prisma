@@ -49,7 +49,9 @@ model Driver {
   last_lat  Decimal? @db.Decimal(20, 15)
   last_long Decimal? @db.Decimal(20, 15)
 
-  created_at DateTime           @default(now())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
   phone_auth DriverPhoneToken[]
 }
 
@@ -61,7 +63,8 @@ model DriverPhoneToken {
   otp       String @unique
 
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+
+  @@index([otp])
 }
 
 model Car {

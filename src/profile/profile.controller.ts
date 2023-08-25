@@ -6,12 +6,10 @@ import {
   HttpStatus,
   Session,
   Put,
-  UseGuards,
 } from "@nestjs/common";
 import { ProfileService } from "./profile.service";
 import { ProfileUpdateDto } from "./dto/profile-update.dto";
 import * as secureSession from "@fastify/secure-session";
-import { CustomerGuard } from "@app/customer/customer.guard";
 import { ApiTags } from "@nestjs/swagger";
 
 @ApiTags("profile")
@@ -20,7 +18,6 @@ export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
   @Get()
-  @UseGuards(CustomerGuard)
   async getProfile(@Session() session: secureSession.Session) {
     const user_id = session.get("data");
 

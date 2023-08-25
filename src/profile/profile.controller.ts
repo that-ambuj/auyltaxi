@@ -28,9 +28,7 @@ export class ProfileController {
       throw new HttpException("User Not Logged In.", HttpStatus.FORBIDDEN);
     }
 
-    const user = await this.profileService.findById(user_id);
-
-    return { data: user };
+    return this.profileService.findById(user_id);
   }
 
   @Put()

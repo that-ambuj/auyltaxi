@@ -1,6 +1,6 @@
 import { ProfileUpdateDto } from "@app/profile/dto/profile-update.dto";
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { Driver, Ride } from "@prisma/client";
+import { Driver } from "@prisma/client";
 import { PrismaService } from "@shared/prisma.service";
 
 @Injectable()

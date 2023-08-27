@@ -1,6 +1,6 @@
 import { ProfileUpdateDto } from "@app/profile/dto/profile-update.dto";
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { Driver } from "@prisma/client";
+import { Driver, Ride } from "@prisma/client";
 import { PrismaService } from "@shared/prisma.service";
 
 @Injectable()
@@ -101,6 +101,15 @@ export class DriverService {
     });
   }
 
+  async findRides({ take, skip }: { take: number; skip: number }) {
+    return this.prisma.ride.findMany({
+      where: { status: "SEARCHING" },
+      orderBy: { created_at: "asc" },
+      skip,
+      take,
+    });
+  }
+
   async getNearbyRides({
     id,
     take = 10,
@@ -124,7 +133,7 @@ export class DriverService {
 
     const orig = { lat: last_lat.toNumber(), long: last_long.toNumber() };
 
-    let rides;
+    let rides: Ride[];
 
     if (!cursor) {
       rides = await this.prisma.ride.findMany({

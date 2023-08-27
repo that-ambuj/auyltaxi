@@ -7,6 +7,8 @@ import {
   Req,
   UseGuards,
   Query,
+  Param,
+  NotFoundException,
 } from "@nestjs/common";
 import { DriverGuard } from "./driver.guard";
 import { FastifyRequest } from "fastify";
@@ -66,5 +68,20 @@ export class DriverController {
       cursor: data.cursor,
       max_distance: data.max_distance,
     });
+  }
+
+  @Post("rides/:id/finish")
+  async finishRide(@Param("id") id: string, @Req() req: FastifyRequest) {
+    const driver = req["user"] as Driver;
+
+    const updated_ride = await this.driverService.markFinished({
+      id,
+      driver_id: driver.id,
+    });
+
+    if (!updated_ride)
+      throw new NotFoundException(`The ride with id: ${id} does not exist`);
+
+    return updated_ride;
   }
 }

@@ -16,10 +16,10 @@ import { Driver } from "@prisma/client";
 import { UpdateLocationDto } from "./dto/update-location.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { GetNearbyRidesDto } from "./dto/get-nearby-rides.dto";
-import { request } from "http";
 import { GetRidesDriverDto } from "./dto/get-rides-driver.dto";
+import { PaginationDto } from "@shared/pagination.dto";
 
-@ApiTags("Driver Location")
+@ApiTags("Rides (Driver)")
 @UseGuards(DriverGuard)
 @Controller("driver")
 export class DriverController {
@@ -68,6 +68,30 @@ export class DriverController {
       cursor: data.cursor,
       max_distance: data.max_distance,
     });
+  }
+
+  @Get("ridesHistory")
+  async getRidesHistory(
+    @Req() req: FastifyRequest,
+    @Query() data: PaginationDto,
+  ) {
+    const driver = req["user"] as Driver;
+
+    return this.driverService.findRidesByDriverId({
+      driver_id: driver.id,
+      take: data.limit,
+      skip: data.skip(),
+    });
+  }
+
+  @Get("ridesHistory/:id")
+  async getRideHistoryById(
+    @Req() req: FastifyRequest,
+    @Param("id") id: string,
+  ) {
+    const driver = req["user"] as Driver;
+
+    return this.driverService.findRideByDriverId({ driver_id: driver.id, id });
   }
 
   @Post("rides/:id/finish")

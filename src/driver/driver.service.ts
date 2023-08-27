@@ -110,6 +110,54 @@ export class DriverService {
     });
   }
 
+  async findRidesByDriverId({
+    driver_id,
+    take,
+    skip,
+  }: {
+    driver_id: string;
+    take: number;
+    skip: number;
+  }) {
+    return this.prisma.ride.findMany({
+      where: { driver_id },
+      orderBy: { updated_at: "desc" },
+      skip,
+      take,
+    });
+  }
+
+  async findRideByDriverId({
+    driver_id,
+    id,
+  }: {
+    driver_id: string;
+    id: string;
+  }) {
+    return this.prisma.ride.findUnique({ where: { id, driver_id } });
+  }
+
+  async markFinished({ id, driver_id }: { id: string; driver_id: string }) {
+    // TODO: check that the driver's last location is within 50m-100m
+    // of the drop location
+    const ride = await this.prisma.ride.update({
+      where: { id, driver_id, status: "BOOKED" },
+      data: { status: "FINISHED" },
+    });
+
+    if (!ride) {
+      return null;
+    }
+
+    // Update driver's balance
+    await this.prisma.driver.update({
+      where: { id: driver_id },
+      data: { balance: { increment: ride.confirmed_fare } },
+    });
+
+    return ride;
+  }
+
   async getNearbyRides({
     id,
     take = 10,

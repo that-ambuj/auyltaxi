@@ -35,6 +35,20 @@ export class RideOffersService {
 
       return this.prisma.rideOffer.findMany({
         where: { ride_id, OR: status_arr },
+        include: {
+          driver: {
+            select: {
+              car: true,
+              name: true,
+              id: true,
+              last_lat: true,
+              last_long: true,
+              phone_number: true,
+              created_at: true,
+              updated_at: true,
+            },
+          },
+        },
       });
     }
 

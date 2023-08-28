@@ -10,7 +10,6 @@ import {
   NotFoundException,
   Query,
   ForbiddenException,
-  ParseIntPipe,
 } from "@nestjs/common";
 import { RideService } from "./rides.service";
 import { CreateRideDto } from "./dto/create-ride.dto";

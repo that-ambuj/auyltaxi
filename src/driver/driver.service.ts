@@ -2,10 +2,11 @@ import { ProfileUpdateDto } from "@app/profile/dto/profile-update.dto";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { Driver, Ride } from "@prisma/client";
 import { PrismaService } from "@shared/prisma.service";
+import { RideStatusForHistory } from "./dto/get-rides-history.dto";
 
 @Injectable()
 export class DriverService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async sendOtp(driver_id: string, new_otp: string): Promise<string> {
     // Cleanup all old OTP token
@@ -113,14 +114,27 @@ export class DriverService {
   async findRidesByDriverId({
     driver_id,
     take,
+    status,
     skip,
   }: {
     driver_id: string;
+    status: RideStatusForHistory | RideStatusForHistory[];
     take: number;
     skip: number;
   }) {
+    if (Array.isArray(status)) {
+      const status_arr = status.map((s) => ({ status: s }))
+
+      return this.prisma.ride.findMany({
+        where: { driver_id, OR: status_arr },
+        orderBy: { updated_at: "desc" },
+        skip,
+        take
+      })
+    }
+
     return this.prisma.ride.findMany({
-      where: { driver_id },
+      where: { driver_id, status },
       orderBy: { updated_at: "desc" },
       skip,
       take,
@@ -226,9 +240,9 @@ function haversineDistance({
   const a =
     Math.sin(d_lat / 2) * Math.sin(d_lat / 2) +
     Math.cos((orig.lat * Math.PI) / 180) *
-      Math.cos((dest.lat * Math.PI) / 180) *
-      Math.sin(d_long / 2) *
-      Math.sin(d_long / 2);
+    Math.cos((dest.lat * Math.PI) / 180) *
+    Math.sin(d_long / 2) *
+    Math.sin(d_long / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   const distance = R * c;

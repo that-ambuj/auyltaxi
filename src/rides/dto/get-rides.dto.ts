@@ -18,4 +18,8 @@ export class GetRidesDto {
   @IsOptional()
   @IsEnum(RideStatus, { each: true })
   status?: RideStatus[];
+
+  skip(): number {
+    return (this.page - 1) * this.limit;
+  }
 }

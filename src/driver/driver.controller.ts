@@ -17,13 +17,13 @@ import { UpdateLocationDto } from "./dto/update-location.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { GetNearbyRidesDto } from "./dto/get-nearby-rides.dto";
 import { GetRidesDriverDto } from "./dto/get-rides-driver.dto";
-import { PaginationDto } from "@shared/pagination.dto";
+import { GetRidesHistoryDto } from "./dto/get-rides-history.dto";
 
 @ApiTags("Rides (Driver)")
 @UseGuards(DriverGuard)
 @Controller("driver")
 export class DriverController {
-  constructor(private readonly driverService: DriverService) {}
+  constructor(private readonly driverService: DriverService) { }
 
   @Get("location")
   async getLastLocation(@Req() req: FastifyRequest) {
@@ -53,6 +53,7 @@ export class DriverController {
     return this.driverService.findRides({ take: data.limit, skip });
   }
 
+
   @Get("nearbyRides")
   async getNearbyRides(
     @Req() req: FastifyRequest,
@@ -73,7 +74,7 @@ export class DriverController {
   @Get("ridesHistory")
   async getRidesHistory(
     @Req() req: FastifyRequest,
-    @Query() data: PaginationDto,
+    @Query() data: GetRidesHistoryDto,
   ) {
     const driver = req["user"] as Driver;
 
@@ -81,6 +82,7 @@ export class DriverController {
       driver_id: driver.id,
       take: data.limit,
       skip: data.skip(),
+      status: data.status
     });
   }
 

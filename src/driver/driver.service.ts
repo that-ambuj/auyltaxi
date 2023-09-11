@@ -128,6 +128,7 @@ export class DriverService {
       return this.prisma.ride.findMany({
         where: { driver_id, OR: status_arr },
         orderBy: { updated_at: "desc" },
+        include: { requested_by: true },
         skip,
         take
       })
@@ -136,6 +137,7 @@ export class DriverService {
     return this.prisma.ride.findMany({
       where: { driver_id, status },
       orderBy: { updated_at: "desc" },
+      include: { requested_by: true },
       skip,
       take,
     });
@@ -148,7 +150,7 @@ export class DriverService {
     driver_id: string;
     id: string;
   }) {
-    return this.prisma.ride.findUnique({ where: { id, driver_id } });
+    return this.prisma.ride.findUnique({ where: { id, driver_id }, include: { requested_by: true } });
   }
 
   async markFinished({ id, driver_id }: { id: string; driver_id: string }) {

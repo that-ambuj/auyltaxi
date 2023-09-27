@@ -9,6 +9,7 @@ import {
   Put,
   Param,
   NotFoundException,
+  ForbiddenException,
 } from "@nestjs/common";
 import { RideOffersService } from "./ride-offers.service";
 import { DriverGuard } from "@app/driver/driver.guard";
@@ -19,12 +20,17 @@ import { CreateRideOfferDto } from "./dto/create-ride-offer.dto";
 import { RideOfferStatus } from "./dto/ride-offer-status.dto";
 import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { UpdateRideOfferDto } from "./dto/update-ride-offer.dto";
+import { DriverService } from "@app/driver/driver.service";
+import { RideStatusForHistory } from "@app/driver/dto/get-rides-history.dto";
 
 @ApiTags("Ride Offers(Driver)")
 @UseGuards(DriverGuard)
 @Controller("ridesOffers")
 export class RideOffersController {
-  constructor(private readonly rideOffersService: RideOffersService) {}
+  constructor(
+    private readonly rideOffersService: RideOffersService,
+    private readonly driverService: DriverService,
+  ) {}
 
   @Get()
   @ApiQuery({
@@ -49,6 +55,19 @@ export class RideOffersController {
     @Body() ride_offer: CreateRideOfferDto,
   ): Promise<RideOffer> {
     const driver = req["user"] as Driver;
+
+    const running_rides = await this.driverService.findRidesByDriverId({
+      driver_id: driver.id,
+      status: RideStatusForHistory.BOOKED,
+      skip: 0,
+      take: 1,
+    });
+
+    if (running_rides.length > 0) {
+      throw new ForbiddenException(
+        "Cannot send offer to another ride before finishing or cancelling an already running ride.",
+      );
+    }
 
     return this.rideOffersService.create(ride_offer, driver.id);
   }

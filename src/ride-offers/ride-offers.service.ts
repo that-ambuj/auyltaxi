@@ -89,7 +89,8 @@ export class RideOffersService {
   }
 
   /**
-   * WARNING: This method should only be used by the customer or related controllers
+   * WARNING: This method should only be used by the customer or
+   * related controllers
    */
   async acceptRideOffer({ id, ride_id }: { id: string; ride_id: string }) {
     // Reject all the other offers

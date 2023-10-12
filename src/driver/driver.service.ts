@@ -6,7 +6,7 @@ import { RideStatusForHistory } from "./dto/get-rides-history.dto";
 
 @Injectable()
 export class DriverService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async sendOtp(driver_id: string, new_otp: string): Promise<string> {
     // Cleanup all old OTP token
@@ -123,15 +123,15 @@ export class DriverService {
     skip: number;
   }) {
     if (Array.isArray(status)) {
-      const status_arr = status.map((s) => ({ status: s }))
+      const status_arr = status.map((s) => ({ status: s }));
 
       return this.prisma.ride.findMany({
         where: { driver_id, OR: status_arr },
         orderBy: { updated_at: "desc" },
         include: { requested_by: true },
         skip,
-        take
-      })
+        take,
+      });
     }
 
     return this.prisma.ride.findMany({
@@ -150,7 +150,10 @@ export class DriverService {
     driver_id: string;
     id: string;
   }) {
-    return this.prisma.ride.findUnique({ where: { id, driver_id }, include: { requested_by: true } });
+    return this.prisma.ride.findUnique({
+      where: { id, driver_id },
+      include: { requested_by: true },
+    });
   }
 
   async markFinished({ id, driver_id }: { id: string; driver_id: string }) {
@@ -172,6 +175,36 @@ export class DriverService {
     });
 
     return ride;
+  }
+
+  async getAccountInfoDaily({ driver_id }: { driver_id: string }) {
+    const day_start = new Date();
+    // Set to kazakhastan timezone
+    day_start.setUTCHours(6, 0, 0);
+
+    const recent_rides = await this.prisma.ride.findMany({
+      where: {
+        driver_id,
+        status: "FINISHED",
+        updated_at: { gte: day_start },
+      },
+      orderBy: {
+        updated_at: "desc",
+      },
+      select: {
+        id: true,
+        confirmed_fare: true,
+        updated_at: true,
+        created_at: true,
+      },
+    });
+
+    const daily_earning = recent_rides.reduce(
+      (acc, r) => acc + r.confirmed_fare.toNumber(),
+      0,
+    );
+
+    return { daily_earning, ...recent_rides, day_start };
   }
 
   async getNearbyRides({
@@ -242,9 +275,9 @@ function haversineDistance({
   const a =
     Math.sin(d_lat / 2) * Math.sin(d_lat / 2) +
     Math.cos((orig.lat * Math.PI) / 180) *
-    Math.cos((dest.lat * Math.PI) / 180) *
-    Math.sin(d_long / 2) *
-    Math.sin(d_long / 2);
+      Math.cos((dest.lat * Math.PI) / 180) *
+      Math.sin(d_long / 2) *
+      Math.sin(d_long / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   const distance = R * c;

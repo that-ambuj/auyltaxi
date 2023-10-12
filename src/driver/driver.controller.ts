@@ -23,7 +23,7 @@ import { GetRidesHistoryDto } from "./dto/get-rides-history.dto";
 @UseGuards(DriverGuard)
 @Controller("driver")
 export class DriverController {
-  constructor(private readonly driverService: DriverService) { }
+  constructor(private readonly driverService: DriverService) {}
 
   @Get("location")
   async getLastLocation(@Req() req: FastifyRequest) {
@@ -53,7 +53,6 @@ export class DriverController {
     return this.driverService.findRides({ take: data.limit, skip });
   }
 
-
   @Get("nearbyRides")
   async getNearbyRides(
     @Req() req: FastifyRequest,
@@ -82,7 +81,7 @@ export class DriverController {
       driver_id: driver.id,
       take: data.limit,
       skip: data.skip(),
-      status: data.status
+      status: data.status,
     });
   }
 
@@ -109,5 +108,12 @@ export class DriverController {
       throw new NotFoundException(`The ride with id: ${id} does not exist`);
 
     return updated_ride;
+  }
+
+  @Get("balance/daily")
+  async getAccount(@Req() req: FastifyRequest) {
+    const driver = req["user"] as Driver;
+
+    return this.driverService.getAccountInfoDaily({ driver_id: driver.id });
   }
 }

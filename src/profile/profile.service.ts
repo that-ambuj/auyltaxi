@@ -1,4 +1,3 @@
-import { UserService } from "@app/user.service";
 import { Injectable } from "@nestjs/common";
 import { Customer, Driver } from "@prisma/client";
 import { ProfileUpdateDto } from "./dto/profile-update.dto";
@@ -12,7 +11,6 @@ type UserType = {
 @Injectable()
 export class ProfileService {
   constructor(
-    private userService: UserService,
     private driverService: DriverService,
     private customerService: CustomerService,
   ) {}

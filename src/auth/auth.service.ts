@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { CustomerService } from "@app/customer/customer.service";
-
 import { DriverService } from "@app/driver/driver.service";
 import { OtpService } from "@app/otp.service";
 import { SignInDto } from "./dto/signup.dto";
 import { Customer, Driver } from "@prisma/client";
+import { PrismaService } from "@shared/prisma.service";
 
 @Injectable()
 export class AuthService {
@@ -12,6 +12,7 @@ export class AuthService {
     private customerService: CustomerService,
     private driverService: DriverService,
     private otpService: OtpService,
+    private prisma: PrismaService,
   ) {}
 
   async signInWithOtp(userInfo: SignInDto) {
@@ -59,5 +60,27 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  async setDeviceToken({
+    id,
+    user_type,
+    device_token,
+  }: {
+    id: string;
+    user_type: "driver" | "customer";
+    device_token: string;
+  }) {
+    if (user_type == "customer") {
+      return this.prisma.customer.update({
+        where: { id },
+        data: { device_token },
+      });
+    } else {
+      return this.prisma.driver.update({
+        where: { id },
+        data: { device_token },
+      });
+    }
   }
 }

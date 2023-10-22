@@ -5,12 +5,14 @@ import { Ride } from "@prisma/client";
 import { UpdateRideDto } from "./dto/update-ride.dto";
 import { RideStatus } from "./dto/ride-status.dto";
 import { RideOffersService } from "@app/ride-offers/ride-offers.service";
+import { FirebaseService } from "@app/firebase/firebase.service";
 
 @Injectable()
 export class RideService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly rideOfferService: RideOffersService,
+    private readonly firebaseService: FirebaseService,
   ) {}
 
   async findAll({
@@ -82,7 +84,7 @@ export class RideService {
       ride_id,
     });
 
-    return this.prisma.ride.update({
+    const updated_ride = await this.prisma.ride.update({
       where: { id: ride_id, customer_id },
       data: {
         status: "BOOKED",
@@ -90,6 +92,14 @@ export class RideService {
         confirmed_fare: updated_offer.proposed_fare,
       },
     });
+
+    await this.firebaseService.sendNotification({
+      user_id: updated_offer.driver_id,
+      // WARN: the message will not make sense when `pickup_name` or `drop_name` is null
+      message: `Ride Offer for ${updated_offer.proposed_fare} from ${updated_ride.pickup_name} to ${updated_ride.drop_name} was accepted.`,
+    });
+
+    return updated_ride;
   }
 
   async cancelRide(customer_id: string, ride_id: string): Promise<Ride | null> {

@@ -17,6 +17,7 @@ model Customer {
   name         String?
   phone_number String  @unique
   rides        Ride[]
+  device_token String?
 
   created_at         DateTime            @default(now())
   updated_at         DateTime            @updatedAt
@@ -40,6 +41,7 @@ model Driver {
   name         String?
   phone_number String  @unique
   balance      Decimal @default(0) @db.Decimal(12, 2)
+  device_token String?
 
   car         Car?
   rides       Ride[]

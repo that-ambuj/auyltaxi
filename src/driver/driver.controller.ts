@@ -18,12 +18,16 @@ import { ApiTags } from "@nestjs/swagger";
 import { GetNearbyRidesDto } from "./dto/get-nearby-rides.dto";
 import { GetRidesDriverDto } from "./dto/get-rides-driver.dto";
 import { GetRidesHistoryDto } from "./dto/get-rides-history.dto";
+import { FirebaseService } from "@app/firebase/firebase.service";
 
 @ApiTags("Rides (Driver)")
 @UseGuards(DriverGuard)
 @Controller("driver")
 export class DriverController {
-  constructor(private readonly driverService: DriverService) {}
+  constructor(
+    private readonly firebaseService: FirebaseService,
+    private readonly driverService: DriverService,
+  ) {}
 
   @Get("location")
   async getLastLocation(@Req() req: FastifyRequest) {
@@ -106,6 +110,11 @@ export class DriverController {
 
     if (!updated_ride)
       throw new NotFoundException(`The ride with id: ${id} does not exist`);
+
+    await this.firebaseService.sendNotification({
+      user_id: updated_ride.customer_id,
+      message: `Your ride from ${updated_ride.pickup_name} to ${updated_ride.drop_name} has finished.`,
+    });
 
     return updated_ride;
   }

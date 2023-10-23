@@ -1,17 +1,37 @@
 import { ProfileService } from "@app/profile/profile.service";
-import { Injectable, OnModuleInit } from "@nestjs/common";
-import { initializeApp, applicationDefault } from "firebase-admin/app";
+import {
+  Injectable,
+  OnModuleDestroy,
+  OnModuleInit,
+  Scope,
+} from "@nestjs/common";
+import {
+  initializeApp,
+  applicationDefault,
+  type App,
+  deleteApp,
+  getApps,
+} from "firebase-admin/app";
 import { getMessaging } from "firebase-admin/messaging";
 
-@Injectable()
-export class FirebaseService implements OnModuleInit {
+@Injectable({ scope: Scope.DEFAULT })
+export class FirebaseService implements OnModuleInit, OnModuleDestroy {
+  private app: App;
+
   constructor(private readonly profileService: ProfileService) {}
 
-  async onModuleInit() {
-    initializeApp({
-      credential: applicationDefault(),
-    });
-    console.info("Successfully initiated FirebaseService.");
+  onModuleInit() {
+    const apps = getApps();
+
+    if (apps.length != 0) {
+      this.app = initializeApp({
+        credential: applicationDefault(),
+      });
+    }
+  }
+
+  onModuleDestroy() {
+    deleteApp(this.app);
   }
 
   async sendNotification({

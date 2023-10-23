@@ -6,15 +6,15 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "yarn nest build",
+    "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "NODE_ENV=development PORT=3000 yarn nest start -b swc --type-check",
-    "start:dev": "NODE_ENV=development PORT=3000 yarn nest start --watch -b swc --type-check",
-    "start:debug": "yarn nest start --debug --watch",
+    "start": "NODE_ENV=development PORT=3000 nest start -b swc --type-check",
+    "start:dev": "NODE_ENV=development PORT=3000 nest start --watch -b swc --type-check",
+    "start:debug": "nest start --debug --watch",
     "start:prod": "NODE_ENV=production node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
-    "prisma:studio": "yarn prisma studio",
+    "prisma:studio": "prisma studio",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -78,19 +78,13 @@
     "typescript": "^5.1.3"
   },
   "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
+    "moduleFileExtensions": ["js", "json", "ts"],
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
+    "collectCoverageFrom": ["**/*.(t|j)s"],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }

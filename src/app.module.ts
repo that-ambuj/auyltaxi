@@ -14,8 +14,6 @@ import { ProfileModule } from "./profile/profile.module";
 import { OtpService } from "./otp.service";
 import { RideModule } from "./rides/rides.module";
 import { RideOffersModule } from "./ride-offers/ride-offers.module";
-import { FirebaseService } from "./firebase/firebase.service";
-import { FirebaseModule } from "./firebase/firebase.module";
 
 @Module({
   imports: [
@@ -28,16 +26,10 @@ import { FirebaseModule } from "./firebase/firebase.module";
     ProfileModule,
     RideModule,
     RideOffersModule,
-    FirebaseModule,
   ],
   controllers: [AppController],
   exports: [PrismaService, PrismaModule],
-  providers: [
-    PrismaService,
-    AppService,
-    OtpService,
-    FirebaseService,
-  ],
+  providers: [PrismaService, AppService, OtpService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -11,8 +11,8 @@ type UserType = {
 @Injectable()
 export class ProfileService {
   constructor(
-    private driverService: DriverService,
-    private customerService: CustomerService,
+    private readonly driverService: DriverService,
+    private readonly customerService: CustomerService,
   ) {}
 
   async findById(

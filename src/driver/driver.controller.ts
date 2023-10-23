@@ -113,7 +113,7 @@ export class DriverController {
 
     await this.firebaseService.sendNotification({
       user_id: updated_ride.customer_id,
-      message: `Your ride from ${updated_ride.pickup_name} to ${updated_ride.drop_name} has finished.`,
+      payload: { event_type: "RIDE_FINISHED", ride: updated_ride },
     });
 
     return updated_ride;

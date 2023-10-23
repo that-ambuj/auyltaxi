@@ -95,8 +95,11 @@ export class RideService {
 
     await this.firebaseService.sendNotification({
       user_id: updated_offer.driver_id,
-      // WARN: the message will not make sense when `pickup_name` or `drop_name` is null
-      message: `Ride Offer for ${updated_offer.proposed_fare} from ${updated_ride.pickup_name} to ${updated_ride.drop_name} was accepted.`,
+      payload: {
+        event_type: "RIDE_OFFER_ACCEPTED",
+        ride: updated_ride,
+        ride_offer: updated_offer,
+      },
     });
 
     return updated_ride;

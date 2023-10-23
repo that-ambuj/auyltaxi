@@ -11,6 +11,7 @@ import metadata from "./metadata";
 import { ConfigService } from "@nestjs/config";
 import { Environment } from "@config";
 import { ValidationPipe } from "@nestjs/common";
+import { initializeApp } from "firebase-admin/app";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -19,6 +20,7 @@ async function bootstrap() {
       trustProxy: process.env["NODE_ENV"] === "production",
     }),
   );
+  initializeApp();
 
   await app.register(secureSession, {
     secret: "averylogphrasebiggerthanthirtytwochars",

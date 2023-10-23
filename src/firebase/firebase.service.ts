@@ -12,6 +12,7 @@ import {
   type App,
   deleteApp,
   getApps,
+  getApp,
 } from "firebase-admin/app";
 import { getMessaging } from "firebase-admin/messaging";
 
@@ -26,25 +27,9 @@ type NotificationPayload = {
   ride_offer?: RideOffer;
 };
 
-@Injectable({ scope: Scope.DEFAULT })
-export class FirebaseService implements OnModuleInit, OnModuleDestroy {
-  private app: App;
-
+@Injectable()
+export class FirebaseService {
   constructor(private readonly profileService: ProfileService) {}
-
-  onModuleInit() {
-    const apps = getApps();
-
-    if (apps.length != 0) {
-      this.app = initializeApp({
-        credential: applicationDefault(),
-      });
-    }
-  }
-
-  onModuleDestroy() {
-    deleteApp(this.app);
-  }
 
   async sendNotification({
     user_id,

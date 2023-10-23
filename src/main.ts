@@ -21,6 +21,8 @@ async function bootstrap() {
     }),
   );
 
+  initializeApp();
+
   await app.register(secureSession, {
     secret: "averylogphrasebiggerthanthirtytwochars",
     salt: "mq9hDxBVDbspDR6n",

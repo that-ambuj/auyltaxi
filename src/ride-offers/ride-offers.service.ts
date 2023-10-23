@@ -105,6 +105,7 @@ export class RideOffersService {
     return this.prisma.rideOffer.update({
       where: { id, ride_id },
       data: { status: "ACCEPTED" },
+      include: { ride: true, driver: true },
     });
   }
 }

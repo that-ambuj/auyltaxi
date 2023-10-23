@@ -97,9 +97,10 @@ export class RideService {
       user_id: updated_offer.driver_id,
       payload: {
         event_type: "RIDE_OFFER_ACCEPTED",
-        ride: updated_ride,
         ride_offer: updated_offer,
       },
+      title: `Offer accepted`,
+      body: `Your offer for ${updated_offer.proposed_fare} was accepted`,
     });
 
     return updated_ride;

@@ -1,19 +1,6 @@
 import { ProfileService } from "@app/profile/profile.service";
-import {
-  Injectable,
-  OnModuleDestroy,
-  OnModuleInit,
-  Scope,
-} from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Ride, RideOffer } from "@prisma/client";
-import {
-  initializeApp,
-  applicationDefault,
-  type App,
-  deleteApp,
-  getApps,
-  getApp,
-} from "firebase-admin/app";
 import { getMessaging } from "firebase-admin/messaging";
 
 type NotificationPayload = {
@@ -23,8 +10,8 @@ type NotificationPayload = {
     | "RIDE_OFFER_ACCEPTED"
     | "RIDE_OFFER_CANCELLED"
     | "RIDE_FINISHED";
-  ride?: Ride;
   ride_offer?: RideOffer;
+  ride?: Ride;
 };
 
 @Injectable()
@@ -34,9 +21,13 @@ export class FirebaseService {
   async sendNotification({
     user_id,
     payload,
+    body,
+    title,
   }: {
     user_id: string;
     payload: NotificationPayload;
+    body: string;
+    title: string;
   }) {
     try {
       const user = await this.profileService.findById(user_id);
@@ -46,6 +37,7 @@ export class FirebaseService {
       const res = await getMessaging().send({
         data: { payload: JSON.stringify(payload) },
         token,
+        notification: { body, title },
       });
       console.info("Successfully sent notification from firebase:", res);
 

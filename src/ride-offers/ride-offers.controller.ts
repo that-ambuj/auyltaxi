@@ -23,6 +23,7 @@ import { UpdateRideOfferDto } from "./dto/update-ride-offer.dto";
 import { DriverService } from "@app/driver/driver.service";
 import { RideStatusForHistory } from "@app/driver/dto/get-rides-history.dto";
 import { FirebaseService } from "@app/firebase/firebase.service";
+import { PrismaService } from "@shared/prisma.service";
 
 @ApiTags("Ride Offers(Driver)")
 @UseGuards(DriverGuard)
@@ -32,6 +33,7 @@ export class RideOffersController {
     private readonly rideOffersService: RideOffersService,
     private readonly driverService: DriverService,
     private readonly firebaseService: FirebaseService,
+    private readonly prisma: PrismaService,
   ) {}
 
   @Get()
@@ -78,7 +80,12 @@ export class RideOffersController {
 
     await this.firebaseService.sendNotification({
       user_id: new_offer.ride.customer_id,
-      payload: { event_type: "RIDE_OFFER_CREATED", ride_offer: new_offer },
+      payload: {
+        event_type: "RIDE_OFFER_CREATED",
+        ride_offer: new_offer,
+      },
+      title: `New Offer!`,
+      body: `${driver.name} has sent a new offer for ${ride_offer.proposed_fare}`,
     });
 
     return new_offer;
@@ -104,6 +111,8 @@ export class RideOffersController {
     await this.firebaseService.sendNotification({
       user_id: updated_offer.ride.customer_id,
       payload: { event_type: "RIDE_OFFER_UPDATED", ride_offer: updated_offer },
+      title: `Ride Offer changed`,
+      body: `Offer from ${driver.name} was changed to ${updated_offer.proposed_fare}`,
     });
 
     return updated_offer;
@@ -127,6 +136,8 @@ export class RideOffersController {
         event_type: "RIDE_OFFER_CANCELLED",
         ride_offer: updated_offer,
       },
+      title: `Offer Cancelled`,
+      body: `Ride Offer for ${updated_offer.proposed_fare} was cancelled by the driver.`,
     });
 
     return updated_offer;

@@ -20,7 +20,6 @@ async function bootstrap() {
       trustProxy: process.env["NODE_ENV"] === "production",
     }),
   );
-  initializeApp();
 
   await app.register(secureSession, {
     secret: "averylogphrasebiggerthanthirtytwochars",

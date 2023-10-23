@@ -22,6 +22,7 @@ import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { UpdateRideOfferDto } from "./dto/update-ride-offer.dto";
 import { DriverService } from "@app/driver/driver.service";
 import { RideStatusForHistory } from "@app/driver/dto/get-rides-history.dto";
+import { FirebaseService } from "@app/firebase/firebase.service";
 
 @ApiTags("Ride Offers(Driver)")
 @UseGuards(DriverGuard)
@@ -30,6 +31,7 @@ export class RideOffersController {
   constructor(
     private readonly rideOffersService: RideOffersService,
     private readonly driverService: DriverService,
+    private readonly firebaseService: FirebaseService,
   ) {}
 
   @Get()
@@ -69,7 +71,17 @@ export class RideOffersController {
       );
     }
 
-    return this.rideOffersService.create(ride_offer, driver.id);
+    const new_offer = await this.rideOffersService.create(
+      ride_offer,
+      driver.id,
+    );
+
+    await this.firebaseService.sendNotification({
+      user_id: new_offer.ride.customer_id,
+      payload: { event_type: "RIDE_OFFER_CREATED", ride_offer: new_offer },
+    });
+
+    return new_offer;
   }
 
   @Put(":id")
@@ -89,6 +101,11 @@ export class RideOffersController {
     if (!updated_offer)
       throw new NotFoundException(`Ride Offer with id: ${id} no found`);
 
+    await this.firebaseService.sendNotification({
+      user_id: updated_offer.ride.customer_id,
+      payload: { event_type: "RIDE_OFFER_UPDATED", ride_offer: updated_offer },
+    });
+
     return updated_offer;
   }
 
@@ -103,6 +120,14 @@ export class RideOffersController {
 
     if (!updated_offer)
       throw new NotFoundException(`Ride Offer with id: ${id} not found.`);
+
+    await this.firebaseService.sendNotification({
+      user_id: updated_offer.ride.customer_id,
+      payload: {
+        event_type: "RIDE_OFFER_CANCELLED",
+        ride_offer: updated_offer,
+      },
+    });
 
     return updated_offer;
   }

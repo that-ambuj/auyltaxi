@@ -63,6 +63,7 @@ export class RideOffersService {
         driver_id,
         ...data,
       },
+      include: { ride: true, driver: true },
     });
   }
 
@@ -78,6 +79,7 @@ export class RideOffersService {
     return this.prisma.rideOffer.update({
       where: { id, driver_id },
       data,
+      include: { driver: true, ride: true },
     });
   }
 
@@ -85,6 +87,7 @@ export class RideOffersService {
     return this.prisma.rideOffer.update({
       where: { id, driver_id },
       data: { status: "CANCELLED_BY_DRIVER" },
+      include: { ride: true, driver: true },
     });
   }
 

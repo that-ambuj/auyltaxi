@@ -85,7 +85,7 @@ export class RideOffersService {
 
   async cancelRideOffer({ id, driver_id }: { id: string; driver_id: string }) {
     return this.prisma.rideOffer.update({
-      where: { id, driver_id },
+      where: { id, driver_id, status: "PENDING" },
       data: { status: "CANCELLED_BY_DRIVER" },
       include: { ride: true, driver: true },
     });
@@ -98,12 +98,12 @@ export class RideOffersService {
   async acceptRideOffer({ id, ride_id }: { id: string; ride_id: string }) {
     // Reject all the other offers
     await this.prisma.rideOffer.updateMany({
-      where: { NOT: { id }, ride_id },
+      where: { NOT: { id }, ride_id, status: "PENDING" },
       data: { status: "REJECTED" },
     });
 
     return this.prisma.rideOffer.update({
-      where: { id, ride_id },
+      where: { id, ride_id, status: "PENDING" },
       data: { status: "ACCEPTED" },
       include: { ride: true, driver: true },
     });

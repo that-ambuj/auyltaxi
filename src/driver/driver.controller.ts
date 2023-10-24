@@ -69,7 +69,6 @@ export class DriverController {
       id: driver.id,
       skip,
       take: data.limit,
-      cursor: data.cursor,
       max_distance: data.max_distance,
     });
   }

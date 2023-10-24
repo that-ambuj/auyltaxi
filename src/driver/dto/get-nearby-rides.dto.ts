@@ -19,15 +19,6 @@ export class GetNearbyRidesDto {
   limit?: number = 10;
 
   /**
-   * `created_at` value for the last item in the list
-   *
-   * @todo unused for now, will be implemented later
-   */
-  @IsDate()
-  @IsOptional()
-  cursor?: Date;
-
-  /**
    * Maximum radius of rides from the driver in Kilo Meters
    *
    * @todo unused for now, will be implemented later

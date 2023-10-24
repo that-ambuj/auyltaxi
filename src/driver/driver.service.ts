@@ -211,13 +211,11 @@ export class DriverService {
     id,
     take = 10,
     skip,
-    cursor,
     max_distance = 1,
   }: {
     id: string;
     take?: number;
     skip?: number;
-    cursor?: Date;
     max_distance?: number;
   }) {
     const { last_lat, last_long } = await this.getLocation({ id });
@@ -230,24 +228,12 @@ export class DriverService {
 
     const orig = { lat: last_lat.toNumber(), long: last_long.toNumber() };
 
-    let rides: Ride[];
-
-    if (!cursor) {
-      rides = await this.prisma.ride.findMany({
-        where: { status: "SEARCHING" },
-        orderBy: { created_at: "asc" },
-        skip,
-        take,
-      });
-    } else {
-      rides = await this.prisma.ride.findMany({
-        where: { status: "SEARCHING" },
-        orderBy: { created_at: "asc" },
-        cursor: { created_at: cursor },
-        skip: 1,
-        take,
-      });
-    }
+    const rides = await this.prisma.ride.findMany({
+      where: { status: "SEARCHING" },
+      orderBy: { created_at: "asc" },
+      skip,
+      take,
+    });
 
     const results = rides.filter(({ pickup_lat, pickup_long }) => {
       const distance = haversineDistance({

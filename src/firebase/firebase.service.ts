@@ -34,6 +34,10 @@ export class FirebaseService {
 
       const token = user.device_token;
 
+      if (!token) {
+        return;
+      }
+
       const res = await getMessaging().send({
         data: { payload: JSON.stringify(payload) },
         token,

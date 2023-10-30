@@ -8,6 +8,7 @@ import { DriverModule } from "@app/driver/driver.module";
 
 @Module({
   imports: [DriverModule],
+  exports: [ProfileService],
   controllers: [ProfileController],
   providers: [ProfileService, DriverService, CustomerService, OtpService],
 })

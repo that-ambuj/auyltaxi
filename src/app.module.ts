@@ -14,10 +14,14 @@ import { ProfileModule } from "./profile/profile.module";
 import { OtpService } from "./otp.service";
 import { RideModule } from "./rides/rides.module";
 import { RideOffersModule } from "./ride-offers/ride-offers.module";
+import { CronService } from "./cron.service";
+import { ScheduleModule } from "@nestjs/schedule";
+import { FirebaseService } from "./firebase/firebase.service";
 
 @Module({
   imports: [
     ConfigModule.forRoot({ validate, expandVariables: true }),
+    ScheduleModule.forRoot(),
     HealthModule,
     AuthModule,
     CustomerModule,
@@ -28,8 +32,14 @@ import { RideOffersModule } from "./ride-offers/ride-offers.module";
     RideOffersModule,
   ],
   controllers: [AppController],
-  exports: [PrismaService, PrismaModule],
-  providers: [PrismaService, AppService, OtpService],
+  exports: [PrismaService, PrismaModule, FirebaseService],
+  providers: [
+    PrismaService,
+    AppService,
+    OtpService,
+    CronService,
+    FirebaseService,
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
